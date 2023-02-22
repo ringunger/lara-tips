@@ -1,69 +1,99 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-<!--    <link rel="icon" type="image/svg+xml" href="/vite.svg" />-->
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<head>
+    <meta charset="UTF-8"/>
+    <!--    <link rel="icon" type="image/svg+xml" href="/vite.svg" />-->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <title>Lara-Tips</title>
-    <link rel="stylesheet" href="style.css" />
-  </head>
-  <body x-data="lara_tips">
-  <div class="flex h-screen bg-gray-900">
+    <link rel="stylesheet" href="./src/markdown.css"/>
+    <link rel="stylesheet" href="style.css"/>
+</head>
+<body x-data="lara_tips">
+<div class="flex h-screen bg-gray-900">
     <div class="flex-1 flex flex-col overflow-hidden">
-      <header class="flex justify-between items-center bg-gray-800 p-4">
-        <div class="flex"><span>Lara</span><span>Tips</span></div>
-        <div class="flex">
-
-        </div>
-      </header>
-      <div class="flex flex-row h-full">
-        <nav class="flex w-80 h-full bg-gray-800">
-          <div class="w-full flex flex-col mx-auto py-1">
-            <form action="" class="w-full p-2">
-              <input type="search" class="input w-full p-3 rounded-md bg-gray-900" placeholder="Search" />
-            </form>
-            <div class="h-100 p-2 overflow-y-scroll" x-init="readSections()">
-              <ul class="flex flex-col gap-1">
-                <template  x-for="section of sections">
-                  <a href="#" @click="openSection(section.file)" class="bg-slate-900 rounded-md p-3 text-white hover:text-slate-800 hover:bg-[#eaeaea] active:bg-[#eaeaea]" x-text="section.title">Section</a>
-                </template>
-              </ul>
+        <header class="flex justify-between items-center bg-gray-800 p-4 shadow-sm">
+            <div class="flex">
+                <div class="mr-4">
+                    <img src="./src/icon.svg" width="24" alt="">
+                </div>
+                <span class="text-2xl text-bold text-[#F33]">Lara</span><span class="text-2xl">Tips</span>
             </div>
-          </div>
-        </nav>
-        <main class="flex flex-col w-full overflow-x-hidden overflow-y-auto mb-14">
-          <div class="flex flex-col w-full mx-auto px-6 py-8">
-            <div class="w-full flex-col" x-show="activeTip == null && activeSection != null">
-              <div class="w-full mb-3">
-                <h3 class="text-lg text-gray-100" x-text="activeSection ? activeSection.title : 'Sections'">Section Header</h3>
-              </div>
-              <div class="w-full">
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 sm:grid-cols-2">
-                  <template x-for="tip of tips">
-                    <div @click="openTip(tip)" class="shadow-sm rounded-md py-2 px-3 bg-slate-800">
-                      <a href="#" x-text="tip ? tip.title : ''"></a>
+            <div class="flex">
+
+            </div>
+        </header>
+        <div class="flex flex-row h-full">
+            <nav class="flex w-80 h-full bg-gray-800">
+                <div class="w-full flex flex-col mx-auto py-1">
+                    <form action="" class="w-full p-2 pb-6">
+                        <input type="search" class="input w-full p-3 rounded-md bg-gray-900 hover:shadow-lg" placeholder="Search"/>
+                    </form>
+                    <div class="h-100 p-2 overflow-y-scroll" x-init="readSections()">
+                        <ul class="flex flex-col gap-1">
+                            <template x-for="section of sections">
+                                <a href="#" @click="openSection(section.file)"
+                                   class="bg-slate-900 rounded-md p-3 text-white hover:text-slate-800 hover:bg-[#eaeaea] active:bg-[#eaeaea]"
+                                   x-text="section.title">Section</a>
+                            </template>
+                        </ul>
                     </div>
-                  </template>
                 </div>
-              </div>
-            </div>
+            </nav>
+            <main class="flex flex-col w-full overflow-x-hidden overflow-y-auto mb-14">
+                <div class="flex flex-col w-full mx-auto px-6 py-8 h-full mb-4">
 
-            <div class="w-full" x-show="activeTip !== null && activeSection !== null">
-              <div class="w-full mb-3">
-                <h3 class="text-lg text-gray-100" x-text="activeTip ? activeTip.title : 'Sections'">Section Header</h3>
-                <div class="w-100 my-3 rounded-lg ">
-                    <div x-html="activeTip ? activeTip.content : ''"></div>
+                    <div class="w-full text-center content-center flex-col h-full" x-show="activeTip === null && activeSection === null">
+                        <div class="">
+                            <div class="text-xl"><span>Lara</span>Tips</div>
+                            <div class="text-gray-700">
+                                By @ringunger
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="w-full flex-col" x-show="activeTip == null && activeSection != null">
+                        <div class="w-full">
+                            <input x-model="tipSearch" type="search" class="input w-full p-3 rounded-md bg-gray-900  border-gray-600" placeholder="Search"/>
+                        </div>
+                        <div class="w-full mb-3">
+                            <h3 class="text-xl text-gray-100" x-text="activeSection ? activeSection.title : 'Sections'">Section
+                                Header</h3>
+                        </div>
+                        <div class="w-full mb-5">
+                            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 sm:grid-cols-2">
+                                <template x-for="tip of tips">
+                                    <a href="#" x-show="((tipSearch.length && tip) ? (tip.title.toLowerCase().includes(tipSearch.toLowerCase())) : true)" @click="openTip(tip)" class="shadow-md rounded-md flex flex-row gap-3 items-center py-2 px-3 bg-slate-800">
+                                        <div class="shrink-0 me-4">
+                                            <img class="opacity-[0.6]" src="./src/icon.svg" width="35" alt="">
+                                        </div>
+                                        <sapn class="text-gray-200" x-text="tip ? tip.title : ''"></sapn>
+                                    </a>
+                                </template>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="w-full" x-show="activeTip !== null && activeSection !== null">
+                        <div class="w-full mb-3">
+                            <div class="flex items-center">
+                                <button class="" @click="closeTip()">
+                                    Back
+                                </button>
+                                <h3 class="text-xl text-gray-100" x-text="activeTip ? activeTip.title : 'Sections'"></h3>
+                            </div>
+                            <div class="w-100 my-3 rounded-lg ">
+                                <div class="markdown-body p-3" x-html="activeTip ? parseMarkDown(activeTip.content) : ''"></div>
+                            </div>
+                        </div>
+                    </div>
+
                 </div>
-              </div>
-            </div>
-
-          </div>
-        </main>
-      </div>
+            </main>
+        </div>
     </div>
-  </div>
-  </body>
-  <script type="module" src="main.js"></script>
+</div>
+</body>
+<script type="module" src="main.js"></script>
 <script>
 </script>
 </html>

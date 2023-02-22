@@ -16,7 +16,10 @@
     "vite": "^4.1.0"
   },
   "dependencies": {
+    "@types/marked": "^4.0.8",
     "alpinejs": "^3.11.1",
+    "dompurify": "^3.0.0",
+    "jsdom": "^21.1.0",
     "marked": "^4.2.12",
     "md-2-json": "^2.0.0"
   }
