@@ -4,11 +4,13 @@ import DOMPurify from "./node_modules/dompurify/dist/purify.es"
 window.Alpine = Alpine;
 window.marked = import("./node_modules/marked/marked.min");
 Alpine.data('lara_tips', () => ({
+    isLoading: true,
     sections: [],
     tips: [],
     activeSection: null,
     activeTip: null,
     tipSearch: '',
+    sectionSearch: '',
     lt: new LaraTips(),
     readSections() {
         this.sections = this.lt.getSections();
@@ -32,6 +34,9 @@ Alpine.data('lara_tips', () => ({
         return DOMPurify.sanitize(marked.parse(
             markdown.replace(/^[\u200B\u200C\u200D\u200E\u200F\uFEFF]/,"")
         ));
+    },
+    finishLoading() {
+        this.isLoading = false;
     }
 }))
 Alpine.start();

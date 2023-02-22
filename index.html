@@ -26,16 +26,19 @@
             <nav class="flex w-80 h-full bg-gray-800">
                 <div class="w-full flex flex-col mx-auto py-1">
                     <form action="" class="w-full p-2 pb-6">
-                        <input type="search" class="input w-full p-3 rounded-md bg-gray-900 hover:shadow-lg" placeholder="Search"/>
+                        <input x-model="sectionSearch" type="search" class="input w-full p-3 rounded-md bg-gray-900 hover:shadow-lg" placeholder="Search"/>
                     </form>
                     <div class="h-100 p-2 overflow-y-scroll" x-init="readSections()">
                         <ul class="flex flex-col gap-1">
                             <template x-for="section of sections">
-                                <a href="#" @click="openSection(section.file)"
+                                <a x-show="((sectionSearch.length>0 && section) ? (section.title.toLowerCase().includes(sectionSearch.toLowerCase())) : true)" href="#" @click="openSection(section.file)"
                                    class="bg-slate-900 rounded-md p-3 text-white hover:text-slate-800 hover:bg-[#eaeaea] active:bg-[#eaeaea]"
                                    x-text="section.title">Section</a>
                             </template>
                         </ul>
+                    </div>
+                    <div class="mt-3">
+                        <div class="text-slate-700 text-center">V 0.0.1</div>
                     </div>
                 </div>
             </nav>
@@ -76,7 +79,7 @@
                     <div class="w-full" x-show="activeTip !== null && activeSection !== null">
                         <div class="w-full mb-3">
                             <div class="flex items-center">
-                                <button class="" @click="closeTip()">
+                                <button class="mr-2 bg-slate-800" @click="closeTip()">
                                     Back
                                 </button>
                                 <h3 class="text-xl text-gray-100" x-text="activeTip ? activeTip.title : 'Sections'"></h3>
@@ -91,6 +94,12 @@
             </main>
         </div>
     </div>
+</div>
+<div x-init="setTimeout(() => {finishLoading()}, 2000)" x-show="isLoading"
+     class="fixed top-0 left-0 right-0 bottom-0 w-full h-screen z-50 overflow-hidden bg-gray-900 opacity-95 flex flex-col items-center justify-center">
+    <div class="loader ease-linear rounded-full border-4 border-t-4 border-gray-200 h-12 w-12 mb-4"></div>
+    <h2 class="text-center text-white text-xl font-semibold">Loading...</h2>
+    <p class="w-1/3 text-center text-gray-500">What's up there? I'm glad you gave this a try. Enjoy...</p>
 </div>
 </body>
 <script type="module" src="main.js"></script>
