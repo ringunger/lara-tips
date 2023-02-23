@@ -16,3 +16,6 @@ provided by Polvilas Korop.
 - Tailwind Css
 - Alpine JS
 - HighlightJs
+
+## Road-map
+- To be provided
