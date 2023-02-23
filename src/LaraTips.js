@@ -60,7 +60,6 @@ export class LaraTips {
         const fileDelimiter = '::::';
         const hashes = "".padStart(headingLevel, "#")
         const regexPattern = new RegExp(`^${hashes} (.*)\\s+([\\s\\S]*?)(?=^${hashes} |::::$)`, 'gm');
-        console.log('Regex', regexPattern);
         content = content.toString().replace(/\n{2}/g, '\n');
         const matches = [];
         let match;
@@ -73,7 +72,6 @@ export class LaraTips {
     extractTableOfContents = (mdString) => {
         const regex = /(- (\[.*)\n)/g
         let matches = mdString.toString().match(regex);
-        console.log('CONTENTS ', matches);
         let tableOfContents = [];
         if (matches.length > 0) {
             matches.forEach((item, index) => {
@@ -87,7 +85,6 @@ export class LaraTips {
                 tableOfContents.push(entry);
             });
         }
-        console.log('Table of contents', tableOfContents);
         return tableOfContents;
     }
 
