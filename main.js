@@ -12,6 +12,7 @@ Alpine.data('lara_tips', () => ({
     activeTip: null,
     tipSearch: '',
     sectionSearch: '',
+    error: null,
     lt: new LaraTips(),
     readSections() {
         this.sections = this.lt.getSections();

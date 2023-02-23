@@ -12,7 +12,7 @@
 <body x-data="lara_tips">
 <div class="flex h-screen bg-gray-900">
     <div class="flex-1 flex flex-col overflow-hidden">
-        <header class="flex justify-between items-center bg-gray-800 p-4 shadow-sm">
+        <header class="flex justify-between items-center bg-gray-800 p-4 shadow-sm border-b border-gray-900">
             <div class="flex">
                 <div class="mr-4">
                     <img src="./src/icon.svg" width="24" alt="">
@@ -30,7 +30,7 @@
                         <input x-model="sectionSearch" type="search" class="input w-full p-3 rounded-md bg-gray-900 hover:shadow-lg" placeholder="Search"/>
                     </form>
                     <div class="h-100 p-2 overflow-y-scroll" x-init="readSections()">
-                        <ul class="flex flex-col gap-1">
+                        <ul class="flex flex-col gap-1 pb-6">
                             <template x-for="section of sections">
                                 <a x-show="((sectionSearch.length>0 && section) ? (section.title.toLowerCase().includes(sectionSearch.toLowerCase())) : true)" href="#" @click="openSection(section.file)"
                                    class="bg-slate-900 rounded-md p-3 text-white hover:text-slate-800 hover:bg-[#eaeaea] active:bg-[#eaeaea] flex flex-row justify-between"

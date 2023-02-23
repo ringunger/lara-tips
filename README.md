@@ -7,7 +7,7 @@ provided by Polvilas Korop.
 - `cd` to the project
 - run `git clone git@github.com:LaravelDaily/laravel-tips.git`
 - run `npm install`
-- run `npm run start`
+- run `npm run dev`
 ## Installation
 - Coming soon
 
