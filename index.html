@@ -33,8 +33,8 @@
                         <ul class="flex flex-col gap-1">
                             <template x-for="section of sections">
                                 <a x-show="((sectionSearch.length>0 && section) ? (section.title.toLowerCase().includes(sectionSearch.toLowerCase())) : true)" href="#" @click="openSection(section.file)"
-                                   class="bg-slate-900 rounded-md p-3 text-white hover:text-slate-800 hover:bg-[#eaeaea] active:bg-[#eaeaea]"
-                                   x-text="section.title">Section</a>
+                                   class="bg-slate-900 rounded-md p-3 text-white hover:text-slate-800 hover:bg-[#eaeaea] active:bg-[#eaeaea] flex flex-row justify-between"
+                                   ><div x-text="section.title"></div><div class=" text-center p-1 aspect-square rounded-full text-sm bg-slate-800 text-gray-300" x-text="section.tips"></div></a>
                             </template>
                         </ul>
                     </div>
@@ -46,8 +46,8 @@
             <main class="flex flex-col w-full overflow-x-hidden overflow-y-auto mb-14">
                 <div class="flex flex-col w-full mx-auto px-6 py-8 h-full mb-4">
 
-                    <div class="w-full text-center content-center flex-col h-full" x-show="activeTip === null && activeSection === null">
-                        <div class="border border-slate-500">
+                    <div class="w-full text-center content-center align-center flex-col h-full" x-show="activeTip === null && activeSection === null">
+                        <div class="m-auto">
                             <div class="text-2xl text-gray-600 "><span>Lara</span>Tips</div>
                             <div class="text-gray-700">
                                 By @ringunger
@@ -97,7 +97,7 @@
     </div>
 </div>
 <div x-init="setTimeout(() => {finishLoading()}, 2000)" x-show="isLoading"
-     class="fixed top-0 left-0 right-0 bottom-0 w-full h-screen z-50 overflow-hidden bg-gray-900 opacity-95 flex flex-col items-center justify-center">
+     class="fixed top-0 left-0 right-0 bottom-0 w-full h-screen z-50 overflow-hidden bg-gray-900 opacity-99 flex flex-col items-center justify-center">
     <div class="loader ease-linear rounded-full border-4 border-t-4 border-gray-200 h-12 w-12 mb-4"></div>
     <h2 class="text-center text-white text-xl font-semibold">Loading...</h2>
     <p class="w-1/3 text-center text-gray-500">What's up there? I'm glad you gave this a try. Enjoy...</p>
