@@ -1,8 +1,9 @@
 import Alpine from 'alpinejs'
 import { LaraTips } from "./src/LaraTips.js";
-import DOMPurify from "./node_modules/dompurify/dist/purify.es"
+import DOMPurify from "./node_modules/dompurify/dist/purify.es";
 window.Alpine = Alpine;
 window.marked = import("./node_modules/marked/marked.min");
+import hljs from 'highlight.js';
 Alpine.data('lara_tips', () => ({
     isLoading: true,
     sections: [],
@@ -24,6 +25,9 @@ Alpine.data('lara_tips', () => ({
     openTip(tip) {
         console.log('Loading tip ...', tip);
         this.activeTip = tip;
+        setTimeout(() => {
+            hljs.highlightAll();
+        }, 100)
         // TODO load the tip to the
     },
 
@@ -40,3 +44,4 @@ Alpine.data('lara_tips', () => ({
     }
 }))
 Alpine.start();
+hljs.highlightAll();
