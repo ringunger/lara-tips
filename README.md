@@ -17,5 +17,10 @@ provided by Polvilas Korop.
 - Alpine JS
 - HighlightJs
 
+## Wbe Version
+Find a web version here: [LaraTips](https://laratips.ringlesoft.com)
+
 ## Road-map
-- To be provided
+- [x] Create a Web Version
+- [ ] Compile desktop versions with neutralino
+- [ ] Add more features
