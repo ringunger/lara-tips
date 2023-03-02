@@ -21,6 +21,7 @@ provided by Polvilas Korop.
 Find a web version here: [LaraTips](https://laratips.ringlesoft.com)
 
 ## Road-map
+- [ ] Mobile responsiveness
 - [x] Create a Web Version
 - [ ] Compile desktop versions with neutralino
 - [ ] Add more features
