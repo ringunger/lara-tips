@@ -34,7 +34,6 @@ export class LaraTips {
         const contents = await this.getFileContent(this.tipsPath + filePath);
         if (contents) {
             const tipBlocks = this.extractSections(contents, 3);
-            console.log('TIP BLOCKS', tipBlocks);
             return tipBlocks.map((item) => {
                 return {
                     title: item[0],

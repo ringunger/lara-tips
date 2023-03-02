@@ -2,13 +2,19 @@ import Alpine from 'alpinejs'
 import { LaraTips } from "./src/LaraTips.js";
 import DOMPurify from "./node_modules/dompurify/dist/purify.es";
 window.Alpine = Alpine;
-window.marked = import("./node_modules/marked/marked.min");
+import { marked } from 'marked';
+window.marked = marked; // import("./node_modules/marked/marked.min");
 import hljs from 'highlight.js';
 
 import "././src/highlights.scss";
 import "././src/markdown.css";
 import "./style.css";
+
+import iconUrl from './src/icon.svg';
 Alpine.data('lara_tips', () => ({
+    assets: {
+        iconUrl: iconUrl
+    },
     isLoading: true,
     sections: [],
     tips: [],
@@ -28,7 +34,6 @@ Alpine.data('lara_tips', () => ({
         this.activeTip = null;
     },
     openTip(tip) {
-        console.log('Loading tip ...', tip);
         this.activeTip = tip;
         setTimeout(() => {
             hljs.highlightAll();

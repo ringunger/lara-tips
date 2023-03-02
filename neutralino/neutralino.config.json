@@ -1,10 +1,10 @@
 {
   "$schema": "https://raw.githubusercontent.com/neutralinojs/neutralinojs/main/schemas/neutralino.config.schema.json",
-  "applicationId": "js.neutralino.sample",
+  "applicationId": "com.ringlesoft.raratips",
   "version": "1.0.0",
   "defaultMode": "window",
   "port": 0,
-  "documentRoot": "/resources/",
+  "documentRoot": "/www/",
   "url": "/",
   "enableServer": true,
   "enableNativeAPI": true,
@@ -42,10 +42,10 @@
       "icon": "/resources/icons/appIcon.png",
       "enableInspector": true,
       "borderless": false,
-      "maximize": false,
+      "maximize": true,
       "hidden": false,
       "resizable": true,
-      "exitProcessOnClose": false
+      "exitProcessOnClose": true
     },
     "browser": {
       "globalVariables": {
