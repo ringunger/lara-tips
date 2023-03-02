@@ -4,6 +4,10 @@ import DOMPurify from "./node_modules/dompurify/dist/purify.es";
 window.Alpine = Alpine;
 window.marked = import("./node_modules/marked/marked.min");
 import hljs from 'highlight.js';
+
+import "././src/highlights.scss";
+import "././src/markdown.css";
+import "./style.css";
 Alpine.data('lara_tips', () => ({
     isLoading: true,
     sections: [],
