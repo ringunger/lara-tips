@@ -6,93 +6,101 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <title>Lara-Tips</title>
 </head>
-<body x-data="lara_tips">
-<div class="flex h-screen bg-gray-900">
-    <div class="flex-1 flex flex-col overflow-hidden">
-        <header class="flex justify-between items-center bg-gray-800 p-4 shadow-sm border-b border-gray-900">
-            <div class="flex">
-                <div class="mr-4">
-                    <img :src="assets.iconUrl" width="24" alt="">
-                </div>
-                <span class="text-2xl text-bold text-[#F33]">Lara</span><span class="text-2xl">Tips</span>
+<body x-data="lara_tips" class=" bg-gray-900">
+<header class="fixed w-full z-40 bg-gray-800 p-4 shadow-sm border-b border-gray-900">
+    <div class="w-full flex justify-between items-center ">
+        <div class="flex">
+            <div class="mr-4">
+                <img :src="assets.iconUrl" width="24" alt="">
             </div>
-            <div class="flex">
-
-            </div>
-        </header>
-        <div class="flex flex-row h-full">
-            <nav class="flex w-80 h-full bg-gray-800">
-                <div class="w-full flex flex-col mx-auto py-1">
-                    <form action="" class="w-full p-2 pb-6">
-                        <input x-model="sectionSearch" type="search" class="input w-full p-3 rounded-md bg-gray-900 hover:shadow-lg" placeholder="Search"/>
-                    </form>
-                    <div class="h-100 p-2 overflow-y-scroll" x-init="readSections()">
-                        <ul class="flex flex-col gap-1 pb-6">
-                            <template x-for="section of sections">
-                                <a x-show="((sectionSearch.length>0 && section) ? (section.title.toLowerCase().includes(sectionSearch.toLowerCase())) : true)" href="#" @click="openSection(section.file)"
-                                   class="bg-slate-900 rounded-md p-3 text-white hover:text-slate-800 hover:bg-[#eaeaea] active:bg-[#eaeaea] flex flex-row justify-between"
-                                   ><div x-text="section.title"></div><div class=" text-center p-1 aspect-square rounded-full text-sm bg-slate-800 text-gray-300" x-text="section.tips"></div></a>
-                            </template>
-                        </ul>
-                    </div>
-                    <div class="mt-3">
-                        <div class="text-slate-700 text-center">V 0.0.1</div>
-                    </div>
-                </div>
-            </nav>
-            <main class="flex flex-col w-full overflow-x-hidden overflow-y-auto mb-14">
-                <div class="flex flex-col w-full mx-auto px-6 py-8 h-full mb-4">
-
-                    <div class="w-full text-center content-center align-center flex-col h-full" x-show="activeTip === null && activeSection === null">
-                        <div class="m-auto">
-                            <div class="text-2xl text-gray-600 "><span>Lara</span>Tips</div>
-                            <div class="text-gray-700">
-                                By @ringunger
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="w-full flex-col" x-show="activeTip == null && activeSection != null">
-                        <div class="w-full">
-                            <input x-model="tipSearch" type="search" class="input w-full p-3 rounded-md bg-gray-900 border border-slate-800 rounded-md" placeholder="Search"/>
-                        </div>
-                        <div class="w-full mb-3">
-                            <h3 class="text-xl text-gray-100" x-text="activeSection ? activeSection.title : 'Sections'">Section
-                                Header</h3>
-                        </div>
-                        <div class="w-full mb-5">
-                            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 sm:grid-cols-2">
-                                <template x-for="tip of tips">
-                                    <a href="#" x-show="((tipSearch.length && tip) ? (tip.title.toLowerCase().includes(tipSearch.toLowerCase())) : true)" @click="openTip(tip)" class="shadow-md rounded-md flex flex-row gap-3 items-center py-2 px-3 bg-slate-800">
-                                        <div class="shrink-0 me-4">
-                                            <img class="icon-img opacity-[0.6]"  :src="assets.iconUrl" width="35" alt="">
-                                        </div>
-                                        <sapn class="text-gray-200" x-text="tip ? tip.title : ''"></sapn>
-                                    </a>
-                                </template>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="w-full" x-show="activeTip !== null && activeSection !== null">
-                        <div class="w-full mb-3">
-                            <div class="flex items-center">
-                                <button class="mr-2 bg-slate-800" @click="closeTip()">
-                                    Back
-                                </button>
-                                <h3 class="text-xl text-gray-100" x-text="activeTip ? activeTip.title : 'Sections'"></h3>
-                            </div>
-                            <div class="w-100 my-3 rounded-lg ">
-                                <div class="markdown-body p-3" x-html="activeTip ? parseMarkDown(activeTip.content) : ''"></div>
-                            </div>
-                        </div>
-                    </div>
-
-                </div>
-            </main>
+            <span class="text-2xl text-bold text-[#F33]">Lara</span><span class="text-2xl">Tips</span>
+        </div>
+        <div class="flex">
+            <button @click="toggleSideNav()" data-drawer-target="separator-sidebar" data-drawer-toggle="separator-sidebar" aria-controls="separator-sidebar" type="button" class="p-2  text-sm text-gray-500 rounded-lg md:hidden hover:bg-gray-100 focus:outline-none focus:ring-1 focus:ring-gray-600 dark:text-gray-400 dark:hover:bg-gray-700 dark:focus:ring-gray-600">
+                <span class="sr-only">Open sidebar</span>
+                <svg class="w-6 h-6" aria-hidden="true" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                    <path clip-rule="evenodd" fill-rule="evenodd" d="M2 4.75A.75.75 0 012.75 4h14.5a.75.75 0 010 1.5H2.75A.75.75 0 012 4.75zm0 10.5a.75.75 0 01.75-.75h7.5a.75.75 0 010 1.5h-7.5a.75.75 0 01-.75-.75zM2 10a.75.75 0 01.75-.75h14.5a.75.75 0 010 1.5H2.75A.75.75 0 012 10z"></path>
+                </svg>
+            </button>
         </div>
     </div>
+</header>
+<aside :class="{'-translate-x-full': !showSideNav}" id="separator-sidebar" class="fixed top-0 left-0 z-30 w-72 h-screen transition-transform  sm:translate-x-0" aria-label="Sidebar">
+    <div class="mt-[66px] h-full px-3 py-4 overflow-y-auto bg-gray-50 dark:bg-gray-800">
+        <div class="w-full flex flex-col mx-auto py-1">
+            <form action="" class="w-full p-2 pb-6">
+                <input x-model="sectionSearch" type="search" class="input w-full p-3 rounded-md bg-gray-900 hover:shadow-lg" placeholder="Search"/>
+            </form>
+            <div class="h-100 p-2 overflow-y-scroll" x-init="readSections()">
+                <ul class="flex flex-col gap-1 pb-6">
+                    <template x-for="section of sections">
+                        <a x-show="((sectionSearch.length>0 && section) ? (section.title.toLowerCase().includes(sectionSearch.toLowerCase())) : true)" href="#" @click="openSection(section.file)"
+                           class="bg-slate-900 rounded-md p-3 text-white hover:text-slate-800 hover:bg-[#eaeaea] active:bg-[#eaeaea] flex flex-row justify-between"
+                        ><div x-text="section.title"></div><div class=" text-center p-1 aspect-square rounded-full text-sm bg-slate-800 text-gray-300" x-text="section.tips"></div></a>
+                    </template>
+                </ul>
+            </div>
+            <div class="mt-3">
+                <div class="text-slate-700 text-center">V 0.0.1</div>
+            </div>
+        </div>
+    </div>
+</aside>
+
+<div class="p-4 sm:ml-72 overflow-y-scroll">
+    <div class="flex flex-col w-full mx-auto px-6 py-8 h-full mb-4 mt-[66px]">
+        <div class="w-full text-center content-center align-center flex-col h-full" x-show="activeTip === null && activeSection === null">
+            <div class="m-auto">
+                <div class="text-2xl text-gray-600 "><span>Lara</span>Tips</div>
+                <div class="text-gray-700">
+                    By @ringunger
+                </div>
+            </div>
+        </div>
+
+        <div class="w-full flex-col" x-show="activeTip == null && activeSection != null">
+            <div class="w-full">
+                <input x-model="tipSearch" type="search" class="input w-full p-3 rounded-md bg-gray-900 border border-slate-800 rounded-md" placeholder="Search"/>
+            </div>
+            <div class="w-full mb-3">
+                <h3 class="text-xl text-gray-100" x-text="activeSection ? activeSection.title : 'Sections'">Section
+                    Header</h3>
+            </div>
+            <div class="w-full mb-5">
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 sm:grid-cols-2">
+                    <template x-for="tip of tips">
+                        <a href="#" x-show="((tipSearch.length && tip) ? (tip.title.toLowerCase().includes(tipSearch.toLowerCase())) : true)" @click="openTip(tip)" class="shadow-md rounded-md flex flex-row gap-3 items-center py-2 px-3 bg-slate-800">
+                            <div class="shrink-0 me-4">
+                                <img class="icon-img opacity-[0.6]"  :src="assets.iconUrl" width="35" alt="">
+                            </div>
+                            <sapn class="text-gray-200" x-text="tip ? tip.title : ''"></sapn>
+                        </a>
+                    </template>
+                </div>
+            </div>
+        </div>
+
+        <div class="w-full" x-show="activeTip !== null && activeSection !== null">
+            <div class="w-full mb-3">
+                <div class="flex items-center">
+                    <button class="mr-2 bg-slate-800 p-1" @click="closeTip()">
+                        <span>
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
+                                <path fill="#FFF" d="M21 11L6.414 11 11.707 5.707 10.293 4.293 2.586 12 10.293 19.707 11.707 18.293 6.414 13 21 13z"></path>
+                            </svg>
+                        </span>
+                    </button>
+                    <h3 class="text-xl text-gray-100" x-text="activeTip ? activeTip.title : 'Sections'"></h3>
+                </div>
+                <div class="w-100 my-3 rounded-lg ">
+                    <div class="markdown-body p-3" x-html="activeTip ? parseMarkDown(activeTip.content) : ''"></div>
+                </div>
+            </div>
+        </div>
+
+    </div>
 </div>
+
 <div x-init="setTimeout(() => {finishLoading()}, 2000)" x-show="isLoading"
      class="fixed top-0 left-0 right-0 bottom-0 w-full h-screen z-50 overflow-hidden bg-gray-900 opacity-99 flex flex-col items-center justify-center">
     <div class="loader ease-linear rounded-full border-4 border-t-4 border-gray-200 h-12 w-12 mb-4"></div>

@@ -24,6 +24,7 @@ Alpine.data('lara_tips', () => ({
     sectionSearch: '',
     error: null,
     lt: new LaraTips(),
+    showSideNav: true,
     readSections() {
         this.sections = this.lt.getSections();
     },
@@ -32,6 +33,7 @@ Alpine.data('lara_tips', () => ({
         this.tips = this.lt.loadTips(section);
         this.activeSection = section;
         this.activeTip = null;
+        this.showSideNav = false;
     },
     openTip(tip) {
         this.activeTip = tip;
@@ -51,6 +53,10 @@ Alpine.data('lara_tips', () => ({
     },
     finishLoading() {
         this.isLoading = false;
+    },
+    toggleSideNav() {
+        this.showSideNav = !this.showSideNav;
+        console.log('ShowSideNav', this.showSideNav);
     }
 }))
 Alpine.start();
