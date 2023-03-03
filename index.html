@@ -31,30 +31,37 @@
             <form action="" class="w-full p-2 pb-6">
                 <input x-model="sectionSearch" type="search" class="input w-full p-3 rounded-md bg-gray-900 hover:shadow-lg" placeholder="Search"/>
             </form>
-            <div class="h-100 p-2 overflow-y-scroll" x-init="readSections()">
+            <div class="h-100 p-2 pb-6 overflow-y-scroll" x-init="readSections()">
                 <ul class="flex flex-col gap-1 pb-6">
                     <template x-for="section of sections">
                         <a x-show="((sectionSearch.length>0 && section) ? (section.title.toLowerCase().includes(sectionSearch.toLowerCase())) : true)" href="#" @click="openSection(section.file)"
                            class="bg-slate-900 rounded-md p-3 text-white hover:text-slate-800 hover:bg-[#eaeaea] active:bg-[#eaeaea] flex flex-row justify-between"
-                        ><div x-text="section.title"></div><div class=" text-center p-1 aspect-square rounded-full text-sm bg-slate-800 text-gray-300" x-text="section.tips"></div></a>
+                        ><div x-text="section.title"></div>
+                            <div>
+                                <div class=" text-center p-1 aspect-square rounded-full text-sm bg-slate-800 text-gray-300"
+                                     x-text="section.tips"></div>
+                            </div>
+                        </a>
                     </template>
                 </ul>
-            </div>
-            <div class="mt-3">
-                <div class="text-slate-700 text-center">V 0.0.1</div>
+
+                <div class="mt-1 mb-5">
+                    <div class="text-slate-700 text-center"><span>LaraTips</span> V 0.0.1</div>
+                </div>
             </div>
         </div>
     </div>
 </aside>
 
-<div class="p-4 sm:ml-72 overflow-y-scroll">
-    <div class="flex flex-col w-full mx-auto px-6 py-8 h-full mb-4 mt-[66px]">
-        <div class="w-full text-center content-center align-center flex-col h-full" x-show="activeTip === null && activeSection === null">
+<div class="p-4 sm:ml-72 overflow-y-scroll h-full">
+    <div class="flex flex-col w-full mx-auto px-1 py-8 md:px-6 h-full mb-4 mt-[66px]">
+        <div class="flex w-full text-center justify-center align-center flex-col h-full" x-show="activeTip === null && activeSection === null">
             <div class="m-auto">
                 <div class="text-2xl text-gray-600 "><span>Lara</span>Tips</div>
-                <div class="text-gray-700">
-                    By @ringunger
+                <div class="text-gray-700 small">
+                    By <a href="https://twitter.com/ringunger">@ringunger</a>
                 </div>
+
             </div>
         </div>
 
@@ -63,7 +70,7 @@
                 <input x-model="tipSearch" type="search" class="input w-full p-3 rounded-md bg-gray-900 border border-slate-800 rounded-md" placeholder="Search"/>
             </div>
             <div class="w-full mb-3">
-                <h3 class="text-xl text-gray-100" x-text="activeSection ? activeSection.title : 'Sections'">Section
+                <h3 class="text-lg md:text-xl text-gray-100" x-text="activeSection ? activeSection.title : 'Sections'">Section
                     Header</h3>
             </div>
             <div class="w-full mb-5">
@@ -93,7 +100,7 @@
                     <h3 class="text-xl text-gray-100" x-text="activeTip ? activeTip.title : 'Sections'"></h3>
                 </div>
                 <div class="w-100 my-3 rounded-lg ">
-                    <div class="markdown-body p-3" x-html="activeTip ? parseMarkDown(activeTip.content) : ''"></div>
+                    <div class="markdown-body rounded-lg p-3" x-html="activeTip ? parseMarkDown(activeTip.content) : ''"></div>
                 </div>
             </div>
         </div>
