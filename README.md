@@ -20,8 +20,10 @@ provided by Polvilas Korop.
 ## Wbe Version
 Find a web version here: [LaraTips](https://laratips.ringlesoft.com)
 
+## Binaries
+* <a href='./binaries/LaraTips_mac_os.zip' >Mac Os V 1.0.0 (zip)</a>
 ## Road-map
-- [ ] Mobile responsiveness
+- [x] Mobile responsiveness
 - [x] Create a Web Version
-- [ ] Compile desktop versions with neutralino
+- [x ] Compile desktop versions with neutralino
 - [ ] Add more features
