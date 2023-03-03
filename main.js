@@ -3,7 +3,7 @@ import { LaraTips } from "./src/LaraTips.js";
 import DOMPurify from "./node_modules/dompurify/dist/purify.es";
 window.Alpine = Alpine;
 import { marked } from 'marked';
-window.marked = marked; // import("./node_modules/marked/marked.min");
+window.marked = marked;
 import hljs from 'highlight.js';
 
 import "././src/highlights.scss";
@@ -29,7 +29,6 @@ Alpine.data('lara_tips', () => ({
         this.sections = this.lt.getSections();
     },
     openSection(section) {
-        console.log('Loading section...', section);
         this.tips = this.lt.loadTips(section);
         this.activeSection = section;
         this.activeTip = null;
@@ -40,9 +39,7 @@ Alpine.data('lara_tips', () => ({
         setTimeout(() => {
             hljs.highlightAll();
         }, 100)
-        // TODO load the tip to the
     },
-
     closeTip() {
         this.activeTip = null;
     },

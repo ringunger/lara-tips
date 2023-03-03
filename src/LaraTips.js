@@ -1,4 +1,3 @@
-import md2json from "md-2-json";
 
 export class LaraTips {
     tipsPath;
@@ -10,10 +9,13 @@ export class LaraTips {
         this.loaded = false;
     }
 
+    /**
+     * Load the main list of sections
+     * @returns {Promise<*[]>}
+     */
     getSections = async () => {
         let sections = [];
         const readme = await this.getFileContent('./laravel-tips/README.md');
-
         const readmeContents = this.extractSections(readme, 2);
         if (readmeContents.length) {
             const tableOfContents = readmeContents.find((item) => item[0] === "Table of contents");
@@ -30,6 +32,11 @@ export class LaraTips {
     }
 
 
+    /**
+     * Load tips form MarkDown file
+     * @param filePath
+     * @returns {Promise<{title: *, content: *}[]|*[]>}
+     */
     loadTips = async (filePath) => {
         const contents = await this.getFileContent(this.tipsPath + filePath);
         if (contents) {
@@ -55,6 +62,12 @@ export class LaraTips {
         return await fetch(filePath).then(response => response.text());
     }
 
+    /**
+     * Extract sections based on level of heading
+     * @param content
+     * @param headingLevel
+     * @returns {*[]}
+     */
     extractSections = (content, headingLevel = 2) => {
         const fileDelimiter = '::::';
         const hashes = "".padStart(headingLevel, "#")
@@ -68,6 +81,11 @@ export class LaraTips {
         return matches;
     }
 
+    /**
+     * Extract table o f content
+     * @param mdString
+     * @returns {*[]}
+     */
     extractTableOfContents = (mdString) => {
         const regex = /(- (\[.*)\n)/g
         let matches = mdString.toString().match(regex);
