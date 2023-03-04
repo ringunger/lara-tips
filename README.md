@@ -22,7 +22,13 @@ provided by Polvilas Korop.
 Find a web version here: [LaraTips](https://laratips.ringlesoft.com)
 
 ## Binaries
-* <a href='./binaries/LaraTips_mac_os.zip' >Mac Os V 1.0.0 (zip)</a>
+* <a href='./binaries/LaraTips_mac_x64.zip' >Mac Os v1.0.0 (zip)</a>
+* <a href='./binaries/LaraTips_win_x64.zip' >Windows x64 v1.0.0 (zip)</a>
+* <a href='./binaries/LaraTips_linux_x64.zip' >Linux x64 v1.0.0 (zip)</a>
+* <a href='./binaries/LaraTips_linux_arm64.zip' >Linux arm64 v1.0.0 (zip)</a>
+* <a href='./binaries/LaraTips_linux_armhf.zip' >Linux armhf v1.0.0 (zip)</a>
+
+
 ## Road-map
 - [x] Mobile responsiveness
 - [x] Create a Web Version
