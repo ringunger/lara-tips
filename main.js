@@ -24,7 +24,7 @@ Alpine.data('lara_tips', () => ({
     sectionSearch: '',
     error: null,
     lt: new LaraTips(),
-    showSideNav: true,
+    showSideNav: false,
     readSections() {
         this.sections = this.lt.getSections();
     },
@@ -42,6 +42,9 @@ Alpine.data('lara_tips', () => ({
     },
     closeTip() {
         this.activeTip = null;
+    },
+    closeSection() {
+        this.activeSection = null;
     },
     parseMarkDown(markdown) {
         return DOMPurify.sanitize(marked.parse(

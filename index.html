@@ -16,27 +16,34 @@
             <span class="text-2xl text-bold text-[#F33]">Lara</span><span class="text-2xl">Tips</span>
         </div>
         <div class="flex">
-            <button @click="toggleSideNav()" data-drawer-target="separator-sidebar" data-drawer-toggle="separator-sidebar" aria-controls="separator-sidebar" type="button" class="p-2  text-sm text-gray-500 rounded-lg md:hidden hover:bg-gray-100 focus:outline-none focus:ring-1 focus:ring-gray-600 dark:text-gray-400 dark:hover:bg-gray-700 dark:focus:ring-gray-600">
+            <button @click="toggleSideNav()" data-drawer-target="separator-sidebar" data-drawer-toggle="separator-sidebar"
+                    aria-controls="separator-sidebar" type="button"
+                    class="p-2  text-sm text-gray-500 rounded-lg md:hidden hover:bg-gray-100 focus:outline-none focus:ring-1 focus:ring-gray-600 dark:text-gray-400 dark:hover:bg-gray-700 dark:focus:ring-gray-600">
                 <span class="sr-only">Open sidebar</span>
                 <svg class="w-6 h-6" aria-hidden="true" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
-                    <path clip-rule="evenodd" fill-rule="evenodd" d="M2 4.75A.75.75 0 012.75 4h14.5a.75.75 0 010 1.5H2.75A.75.75 0 012 4.75zm0 10.5a.75.75 0 01.75-.75h7.5a.75.75 0 010 1.5h-7.5a.75.75 0 01-.75-.75zM2 10a.75.75 0 01.75-.75h14.5a.75.75 0 010 1.5H2.75A.75.75 0 012 10z"></path>
+                    <path clip-rule="evenodd" fill-rule="evenodd"
+                          d="M2 4.75A.75.75 0 012.75 4h14.5a.75.75 0 010 1.5H2.75A.75.75 0 012 4.75zm0 10.5a.75.75 0 01.75-.75h7.5a.75.75 0 010 1.5h-7.5a.75.75 0 01-.75-.75zM2 10a.75.75 0 01.75-.75h14.5a.75.75 0 010 1.5H2.75A.75.75 0 012 10z"></path>
                 </svg>
             </button>
         </div>
     </div>
 </header>
-<aside :class="{'-translate-x-full': !showSideNav}" id="separator-sidebar" class="fixed top-0 left-0 z-30 w-72 h-screen transition-transform  sm:translate-x-0" aria-label="Sidebar">
+<aside :class="{'-translate-x-full': !showSideNav}" id="separator-sidebar"
+       class="fixed top-0 left-0 z-30 w-72 h-screen transition-transform  sm:translate-x-0" aria-label="Sidebar">
     <div class="mt-[66px] h-full px-3 py-4 overflow-y-auto bg-gray-50 dark:bg-gray-800">
         <div class="w-full flex flex-col mx-auto py-1">
             <form action="" class="w-full p-2 pb-6">
-                <input x-model="sectionSearch" type="search" class="input w-full p-3 rounded-md bg-gray-900 hover:shadow-lg" placeholder="Search"/>
+                <input x-model="sectionSearch" type="search" class="input w-full p-3 rounded-md bg-gray-900 hover:shadow-lg"
+                       placeholder="Search"/>
             </form>
             <div class="h-100 p-2 pb-6 overflow-y-scroll" x-init="readSections()">
                 <ul class="flex flex-col gap-1 pb-6">
                     <template x-for="section of sections">
-                        <a x-show="((sectionSearch.length>0 && section) ? (section.title.toLowerCase().includes(sectionSearch.toLowerCase())) : true)" href="#" @click="openSection(section.file)"
+                        <a x-show="((sectionSearch.length>0 && section) ? (section.title.toLowerCase().includes(sectionSearch.toLowerCase())) : true)"
+                           href="#" @click="openSection(section.file)"
                            class="bg-slate-900 rounded-md p-3 text-white hover:text-slate-800 hover:bg-[#eaeaea] active:bg-[#eaeaea] flex flex-row justify-between"
-                        ><div x-text="section.title"></div>
+                        >
+                            <div x-text="section.title"></div>
                             <div>
                                 <div class=" text-center p-1 aspect-square rounded-full text-sm bg-slate-800 text-gray-300"
                                      x-text="section.tips"></div>
@@ -55,30 +62,66 @@
 
 <div class="p-4 sm:ml-72 overflow-y-scroll h-full">
     <div class="flex flex-col w-full mx-auto px-1 py-8 md:px-6 h-full mb-4 mt-[66px]">
-        <div class="flex w-full text-center justify-center align-center flex-col h-full" x-show="activeTip === null && activeSection === null">
-            <div class="m-auto">
-                <div class="text-2xl text-gray-600 "><span>Lara</span>Tips</div>
-                <div class="text-gray-700 small">
-                    By <a href="https://twitter.com/ringunger">@ringunger</a>
-                </div>
+        <div x-show="activeTip === null && activeSection === null">
+            <form action="" class="w-full p-2 pb-6">
+                <input x-model="sectionSearch" type="search"
+                       class="border border-gray-700 input w-full p-3 rounded-md bg-gray-900 hover:shadow-lg"
+                       placeholder="Search categories"/>
+            </form>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 sm:grid-cols-2">
+                <template x-for="section of sections">
+                    <a x-show="((sectionSearch.length>0 && section) ? (section.title.toLowerCase().includes(sectionSearch.toLowerCase())) : true)"
+                       href="#" @click="openSection(section.file)"
+                       class="shadow-md hover:shadow-xl rounded-lg flex flex-row gap-3 items-center py-3 px-3 bg-slate-800 text-gray-300 mb-2 hover:text-gray-200"
+                    >
+                        <div class="grow-0">
 
+                            <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none">
+                                <path d="M19 11H5M19 11C20.1046 11 21 11.8954 21 13V19C21 20.1046 20.1046 21 19 21H5C3.89543 21 3 20.1046 3 19V13C3 11.8954 3.89543 11 5 11M19 11V9C19 7.89543 18.1046 7 17 7M5 11V9C5 7.89543 5.89543 7 7 7M7 7V5C7 3.89543 7.89543 3 9 3H15C16.1046 3 17 3.89543 17 5V7M7 7H17" stroke="#4A5568" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
+                            </svg>
+                        </div>
+                        <div class="flex-grow flex">
+                            <div class="flex-grow" x-text="section.title"></div>
+                            <div>
+                                <div class=" text-center p-1 aspect-square rounded-full text-sm bg-slate-700 text-gray-300"
+                                     x-text="section.tips"></div>
+                            </div>
+                        </div>
+                    </a>
+                </template>
             </div>
         </div>
 
         <div class="w-full flex-col" x-show="activeTip == null && activeSection != null">
+            <div class="mb-2">
+                <div class="flex items-center">
+                    <button class="mr-2 bg-slate-800 p-1" @click="closeSection()">
+                        <span>
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
+                                <path fill="#FFF"
+                                      d="M21 11L6.414 11 11.707 5.707 10.293 4.293 2.586 12 10.293 19.707 11.707 18.293 6.414 13 21 13z"></path>
+                            </svg>
+                        </span>
+                    </button>
+                    <h3 class="text-xl text-gray-100" x-text="activeSection ? activeSection.toString().replaceAll('-', ' ').replace('.md', '') : 'Section'">Section</h3>
+                </div>
+            </div>
             <div class="w-full">
-                <input x-model="tipSearch" type="search" class="input w-full p-3 rounded-md bg-gray-900 border border-slate-800 rounded-md" placeholder="Search"/>
+                <input x-model="tipSearch" type="search"
+                       class="input w-full p-3 rounded-md bg-gray-900 border border-slate-800 rounded-md" placeholder="Search tips"/>
             </div>
             <div class="w-full mb-3">
-                <h3 class="text-lg md:text-xl text-gray-100" x-text="activeSection ? activeSection.title : 'Sections'">Section
-                    Header</h3>
+                <h3 class="text-lg md:text-xl text-gray-100" x-text="activeSection ? activeSection.title : 'Sections'">Section Header</h3>
             </div>
             <div class="w-full mb-5">
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-4 sm:grid-cols-2">
                     <template x-for="tip of tips">
-                        <a href="#" x-show="((tipSearch.length && tip) ? (tip.title.toLowerCase().includes(tipSearch.toLowerCase())) : true)" @click="openTip(tip)" class="shadow-md rounded-md flex flex-row gap-3 items-center py-2 px-3 bg-slate-800">
+                        <a href="#"
+                           x-show="((tipSearch.length && tip) ? (tip.title.toLowerCase().includes(tipSearch.toLowerCase())) : true)"
+                           @click="openTip(tip)"
+                           class="shadow-md hover:shadow-lg rounded-md flex flex-row gap-3 items-center py-2 px-3 bg-slate-800">
                             <div class="shrink-0 me-4">
-                                <img class="icon-img opacity-[0.6]"  :src="assets.iconUrl" width="35" alt="">
+                                <img class="icon-img opacity-[0.6]" :src="assets.iconUrl" width="35" alt="">
                             </div>
                             <sapn class="text-gray-200" x-text="tip ? tip.title : ''"></sapn>
                         </a>
@@ -93,7 +136,8 @@
                     <button class="mr-2 bg-slate-800 p-1" @click="closeTip()">
                         <span>
                             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
-                                <path fill="#FFF" d="M21 11L6.414 11 11.707 5.707 10.293 4.293 2.586 12 10.293 19.707 11.707 18.293 6.414 13 21 13z"></path>
+                                <path fill="#FFF"
+                                      d="M21 11L6.414 11 11.707 5.707 10.293 4.293 2.586 12 10.293 19.707 11.707 18.293 6.414 13 21 13z"></path>
                             </svg>
                         </span>
                     </button>
@@ -105,6 +149,23 @@
             </div>
         </div>
 
+    </div>
+</div>
+<div class="footer fixed w-full bottom-0 h-5 bg-gray-900 border-t border-slate-800 text-gray-700 text-xs">
+    <div class="flex justify-end px-3 items-center">
+        <div class="ml-2 flex items-center">
+            <svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 24 24">
+                <path fill="#374151" d="M19.633,7.997c0.013,0.175,0.013,0.349,0.013,0.523c0,5.325-4.053,11.461-11.46,11.461c-2.282,0-4.402-0.661-6.186-1.809 c0.324,0.037,0.636,0.05,0.973,0.05c1.883,0,3.616-0.636,5.001-1.721c-1.771-0.037-3.255-1.197-3.767-2.793 c0.249,0.037,0.499,0.062,0.761,0.062c0.361,0,0.724-0.05,1.061-0.137c-1.847-0.374-3.23-1.995-3.23-3.953v-0.05 c0.537,0.299,1.16,0.486,1.82,0.511C3.534,9.419,2.823,8.184,2.823,6.787c0-0.748,0.199-1.434,0.548-2.032 c1.983,2.443,4.964,4.04,8.306,4.215c-0.062-0.3-0.1-0.611-0.1-0.923c0-2.22,1.796-4.028,4.028-4.028 c1.16,0,2.207,0.486,2.943,1.272c0.91-0.175,1.782-0.512,2.556-0.973c-0.299,0.935-0.936,1.721-1.771,2.22 c0.811-0.088,1.597-0.312,2.319-0.624C21.104,6.712,20.419,7.423,19.633,7.997z"></path>
+            </svg>
+            <a href="https://twitter.com/ringunger" class="text-gray-700 font-light hover:text-gray-600 ml-1">@ringunger</a>
+        </div>
+        <div class="ml-3 flex items-center">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="10" height="10">
+                <path stroke-width="0" fill="#374151"
+                      d="M32 0 C14 0 0 14 0 32 0 53 19 62 22 62 24 62 24 61 24 60 L24 55 C17 57 14 53 13 50 13 50 13 49 11 47 10 46 6 44 10 44 13 44 15 48 15 48 18 52 22 51 24 50 24 48 26 46 26 46 18 45 12 42 12 31 12 27 13 24 15 22 15 22 13 18 15 13 15 13 20 13 24 17 27 15 37 15 40 17 44 13 49 13 49 13 51 20 49 22 49 22 51 24 52 27 52 31 52 42 45 45 38 46 39 47 40 49 40 52 L40 60 C40 61 40 62 42 62 45 62 64 53 64 32 64 14 50 0 32 0 Z"></path>
+            </svg>
+            <a href="https://github.com/ringunger" class="text-gray-700 font-light hover:text-gray-600 ml-1">@ringunger</a>
+        </div>
     </div>
 </div>
 

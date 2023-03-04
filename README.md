@@ -13,9 +13,10 @@ provided by Polvilas Korop.
 
 ## Technology Stack
 - Javascript
-- Tailwind Css
-- Alpine JS
-- HighlightJs
+- [Tailwind Css](https://github.com/tailwindlabs/tailwindcss)
+- [Alpine JS](https://github.com/alpinejs/alpine)
+- [HighlightJs](https://github.com/highlightjs/highlight.js)
+- [Neutralino JS](https://github.com/neutralinojs/neutralinojs)
 
 ## Wbe Version
 Find a web version here: [LaraTips](https://laratips.ringlesoft.com)
@@ -25,5 +26,5 @@ Find a web version here: [LaraTips](https://laratips.ringlesoft.com)
 ## Road-map
 - [x] Mobile responsiveness
 - [x] Create a Web Version
-- [x ] Compile desktop versions with neutralino
+- [x] Compile desktop versions with neutralinojs
 - [ ] Add more features
