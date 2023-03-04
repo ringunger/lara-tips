@@ -10,7 +10,7 @@
   "enableNativeAPI": true,
   "tokenSecurity": "one-time",
   "logging": {
-    "enabled": true,
+    "enabled": false,
     "writeToLogFile": true
   },
   "nativeAllowList": [
@@ -40,7 +40,7 @@
       "fullScreen": false,
       "alwaysOnTop": false,
       "icon": "/resources/icons/appIcon.png",
-      "enableInspector": true,
+      "enableInspector": false,
       "borderless": false,
       "maximize": true,
       "hidden": false,
