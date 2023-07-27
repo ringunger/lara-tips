@@ -11,6 +11,7 @@ import "././src/markdown.css";
 import "./style.css";
 
 import iconUrl from './src/icon.svg';
+
 Alpine.data('lara_tips', () => ({
     assets: {
         iconUrl: iconUrl
@@ -57,6 +58,13 @@ Alpine.data('lara_tips', () => ({
     toggleSideNav() {
         this.showSideNav = !this.showSideNav;
         console.log('ShowSideNav', this.showSideNav);
+    },
+    getUrlParams() {
+        const urlParams = new URLSearchParams(window.location.search);
+        return Object.fromEntries(urlParams.entries());
+    },
+    init() {
+        console.log("PARAMS", this.getUrlParams());
     }
 }))
 Alpine.start();

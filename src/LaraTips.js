@@ -28,6 +28,7 @@ export class LaraTips {
         }
         await this.loadTips(sections[0].file);
         this.loaded = true;
+        console.log(sections);
         return sections;
     }
 
