@@ -18,7 +18,7 @@ provided by Polvilas Korop.
 - [HighlightJs](https://github.com/highlightjs/highlight.js)
 - [Neutralino JS](https://github.com/neutralinojs/neutralinojs)
 
-## Wbe Version
+## Web Version
 Find a web version here: [LaraTips](https://laratips.ringlesoft.com)
 
 ## Binaries
