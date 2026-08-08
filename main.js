@@ -73,7 +73,7 @@ function parseRoute(hash) {
 document.addEventListener('click', (event) => {
     const button = event.target.closest('.copy-code-btn');
     if (!button) return;
-    const pre = button.parentElement?.querySelector('pre');
+    const pre = button.closest('.code-block')?.querySelector('pre');
     const code = pre?.innerText ?? '';
     if (!code) return;
 
@@ -461,12 +461,22 @@ Alpine.data('lara_tips', () => ({
             pre.parentNode.insertBefore(wrapper, pre);
             wrapper.appendChild(pre);
 
+            const language = pre.querySelector('code')?.className.match(/language-([\w+-]+)/)?.[1] ?? 'code';
+            const toolbar = document.createElement('div');
+            toolbar.className = 'code-block__toolbar';
+
+            const label = document.createElement('span');
+            label.className = 'code-block__language';
+            label.textContent = language;
+            toolbar.appendChild(label);
+
             const button = document.createElement('button');
             button.type = 'button';
             button.className = 'copy-code-btn';
             button.dataset.label = 'Copy';
             button.textContent = 'Copy';
-            wrapper.appendChild(button);
+            toolbar.appendChild(button);
+            wrapper.insertBefore(toolbar, pre);
         });
         return container.innerHTML;
     },
