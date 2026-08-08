@@ -105,6 +105,11 @@ Alpine.data('lara_tips', () => ({
     favorites: [],
     tipSearch: '',
     sectionSearch: '',
+    globalSearch: '',
+    searchMarkdownContent: true,
+    globalSearchResults: [],
+    isGlobalSearchLoading: false,
+    globalSearchRequest: 0,
     error: null,
     theme: 'dark',
     lt: new LaraTips(),
@@ -190,7 +195,12 @@ Alpine.data('lara_tips', () => ({
 
     excerpt(markdown, length = 110) {
         if (!markdown) return '';
-        const plain = markdown
+        const plain = this.searchableText(markdown);
+        return plain.length > length ? plain.slice(0, length).trim() + '…' : plain;
+    },
+
+    searchableText(markdown) {
+        return markdown
             .replace(/```[\s\S]*?```/g, '')
             .replace(/`([^`]*)`/g, '$1')
             .replace(/!\[[^\]]*]\([^)]*\)/g, '')
@@ -198,7 +208,34 @@ Alpine.data('lara_tips', () => ({
             .replace(/[#>*_-]/g, ' ')
             .replace(/\s+/g, ' ')
             .trim();
-        return plain.length > length ? plain.slice(0, length).trim() + '…' : plain;
+    },
+
+    async searchAllTips() {
+        const query = this.globalSearch.trim().toLocaleLowerCase();
+        const request = ++this.globalSearchRequest;
+
+        if (!query) {
+            this.globalSearchResults = [];
+            this.isGlobalSearchLoading = false;
+            return;
+        }
+
+        this.isGlobalSearchLoading = true;
+        const allTips = await this.lt.loadAllTips(this.sections);
+        if (request !== this.globalSearchRequest) return;
+
+        this.globalSearchResults = allTips
+            .filter((tip) => {
+                const titleMatches = tip.title.toLocaleLowerCase().includes(query);
+                return titleMatches || (this.searchMarkdownContent && this.searchableText(tip.content).toLocaleLowerCase().includes(query));
+            })
+            .sort((first, second) => {
+                const firstTitleMatch = first.title.toLocaleLowerCase().includes(query);
+                const secondTitleMatch = second.title.toLocaleLowerCase().includes(query);
+                return Number(secondTitleMatch) - Number(firstTitleMatch);
+            });
+        this.isGlobalSearchLoading = false;
+        this.error = this.lt.error;
     },
 
     // ---------- navigation ----------
@@ -255,6 +292,15 @@ Alpine.data('lara_tips', () => ({
         this.tips = await this.lt.loadTips(section.file);
         this.error = this.lt.error;
         if (updateRoute) this.setRoute(`sections/${encodeURIComponent(sectionRouteKey(section.file))}`);
+    },
+
+    async openGlobalSearchResult(result) {
+        const section = this.sections.find((item) => item.file === result.sectionFile);
+        if (!section) return;
+
+        await this.openSection(section, { updateRoute: false });
+        const tip = this.tips.find((item) => item.title === result.title);
+        if (tip) this.openTip(tip);
     },
 
     closeSection() {

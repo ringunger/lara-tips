@@ -65,6 +65,25 @@ export class LaraTips {
     };
 
     /**
+     * Load every category for the global search, preserving its category
+     * metadata on each result. Individual files remain cached by loadTips().
+     * @param {{title: string, file: string}[]} sections
+     * @returns {Promise<{title: string, content: string, sectionFile: string, sectionTitle: string}[]>}
+     */
+    loadAllTips = async (sections) => {
+        const groups = await Promise.all(sections.map(async (section) => {
+            const tips = await this.loadTips(section.file);
+            return tips.map((tip) => ({
+                ...tip,
+                sectionFile: section.file,
+                sectionTitle: section.title,
+            }));
+        }));
+
+        return groups.flat();
+    };
+
+    /**
      * Pick one random tip from a random section. Used for the "Surprise me" action.
      * @param sections
      * @returns {Promise<{section: *, tip: *}|null>}

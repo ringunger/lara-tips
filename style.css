@@ -231,6 +231,41 @@ input.input::placeholder {
   max-width: 42rem;
 }
 
+.search-option {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: var(--muted);
+  font-size: 0.8rem;
+  cursor: pointer;
+}
+
+.search-option input {
+  width: 1rem;
+  height: 1rem;
+  margin: 0;
+  accent-color: var(--accent);
+}
+
+.search-mode-label {
+  padding: 0.3rem 0.55rem;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  color: var(--muted);
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.search-empty {
+  padding: 3.5rem 1rem;
+  border: 1px dashed var(--line-strong);
+  border-radius: 1rem;
+  color: var(--muted);
+  text-align: center;
+}
+
 input.input {
   background-color: var(--input) !important;
   border-color: var(--line-strong) !important;

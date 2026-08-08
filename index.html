@@ -156,13 +156,17 @@
                 <svg class="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-500" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                     <circle cx="11" cy="11" r="7"/><path stroke-linecap="round" d="M21 21l-4.3-4.3"/>
                 </svg>
-                <input id="home-search-input" x-model="sectionSearch" type="search"
+                <input id="home-search-input" x-model="globalSearch" @input.debounce.200ms="searchAllTips()" type="search"
                        class="input w-full pl-10 pr-4 py-3 rounded-xl bg-gray-900 border border-gray-800 focus:border-brand/60"
-                       placeholder="Search categories… (press / to focus)"/>
+                       placeholder="Search all Laravel tips… (press / to focus)"/>
                 </div>
+                <label class="search-option mt-3">
+                    <input type="checkbox" x-model="searchMarkdownContent" @change="searchAllTips()"/>
+                    <span>Search Markdown content</span>
+                </label>
             </div>
 
-            <div class="category-grid grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            <div x-show="!globalSearch.trim()" class="category-grid grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                 <template x-for="section in filteredSections" :key="section.file">
                     <button type="button" @click="openSection(section)"
                             class="category-card group text-left rounded-xl border border-gray-800 bg-gray-900 hover:bg-gray-800/80 hover:border-gray-700 hover:-translate-y-0.5 transition-all p-4 flex items-start gap-3 focus-ring">
@@ -178,9 +182,39 @@
                 </template>
             </div>
 
-            <p x-show="sections.length && filteredSections.length === 0" class="text-center text-gray-600 py-16">
+            <p x-show="!globalSearch.trim() && sections.length && filteredSections.length === 0" class="text-center text-gray-600 py-16">
                 No categories match "<span x-text="sectionSearch"></span>".
             </p>
+
+            <div x-show="globalSearch.trim()" x-cloak class="global-search-results">
+                <div class="flex items-center justify-between gap-3 mb-4">
+                    <p class="text-sm text-gray-500">
+                        <span x-show="isGlobalSearchLoading">Searching tips…</span>
+                        <span x-show="!isGlobalSearchLoading"><span x-text="globalSearchResults.length"></span> matching tips</span>
+                    </p>
+                    <span x-show="!searchMarkdownContent" class="search-mode-label">Titles only</span>
+                </div>
+
+                <div x-show="!isGlobalSearchLoading && globalSearchResults.length" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                    <template x-for="result in globalSearchResults" :key="result.sectionFile + '::' + result.title">
+                        <button type="button" @click="openGlobalSearchResult(result)"
+                                class="category-card group text-left rounded-xl border border-gray-800 bg-gray-900 hover:bg-gray-800/80 hover:border-gray-700 hover:-translate-y-0.5 transition-all p-4 flex flex-col gap-2 focus-ring">
+                            <div class="flex items-start gap-3">
+                                <span class="category-icon shrink-0" x-html="sectionIcon(result.sectionFile, 'w-5 h-5 text-brand')"></span>
+                                <span class="min-w-0 flex-1">
+                                    <span class="block font-semibold text-gray-100 group-hover:text-white leading-snug" x-text="result.title"></span>
+                                    <span class="block mt-1 text-xs text-brand font-medium" x-text="result.sectionTitle"></span>
+                                </span>
+                            </div>
+                            <span class="block text-xs text-gray-500 line-clamp-2" x-text="excerpt(result.content, 150)"></span>
+                        </button>
+                    </template>
+                </div>
+
+                <p x-show="!isGlobalSearchLoading && globalSearchResults.length === 0" class="search-empty">
+                    No tips match "<span x-text="globalSearch"></span>".
+                </p>
+            </div>
         </div>
 
         <!-- ============ SECTION (tip list) or FAVORITES ============ -->
