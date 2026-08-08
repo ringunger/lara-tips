@@ -7,7 +7,7 @@ window.marked = marked;
 import hljs from 'highlight.js';
 import {
     BadgeCheck, Blocks, BookOpen, Bug, Check, Copy, Database, Factory, Image, Link, Mail,
-    Map, Moon, Package, Pin, Plug, ShieldCheck, Sparkles, Sun, Wrench,
+    Map, Moon, Package, Pin, Plug, Share2, ShieldCheck, Sparkles, Sun, Wrench,
     WrapText,
 } from 'lucide';
 
@@ -165,6 +165,9 @@ Alpine.data('lara_tips', () => ({
     globalSearchRequest: 0,
     error: null,
     theme: 'dark',
+    canNativeShare: false,
+    showShareMenu: false,
+    shareCopied: false,
     lt: new LaraTips(),
     showSideNav: false,
 
@@ -173,6 +176,7 @@ Alpine.data('lara_tips', () => ({
     async init() {
         this.favorites = this.loadFavorites();
         this.theme = this.loadTheme();
+        this.canNativeShare = typeof navigator.share === 'function';
         await this.readSections();
         await this.applyRoute();
         this.finishLoading();
@@ -200,7 +204,9 @@ Alpine.data('lara_tips', () => ({
         }
 
         if (event.key === 'Escape') {
-            if (this.activeTip) {
+            if (this.showShareMenu) {
+                this.showShareMenu = false;
+            } else if (this.activeTip) {
                 this.closeTip();
             } else if (this.activeSection || this.viewingFavorites) {
                 this.goHome();
@@ -244,6 +250,10 @@ Alpine.data('lara_tips', () => ({
 
     themeIcon(className = 'w-5 h-5') {
         return iconSvg(this.theme === 'dark' ? Sun : Moon, className);
+    },
+
+    shareIcon(className = 'w-5 h-5') {
+        return iconSvg(Share2, className);
     },
 
     formatInlineCode(value) {
@@ -392,6 +402,7 @@ Alpine.data('lara_tips', () => ({
 
     openTip(tip, { updateRoute = true } = {}) {
         this.activeTip = tip;
+        this.showShareMenu = false;
         if (updateRoute) {
             const sectionFile = tip.sectionFile ?? this.activeSection?.file;
             this.setRoute(`tips/${encodeURIComponent(sectionRouteKey(sectionFile))}/${encodeURIComponent(tip.title)}`);
@@ -448,6 +459,51 @@ Alpine.data('lara_tips', () => ({
         } catch (e) {
             console.warn('Could not save theme preference', e);
         }
+    },
+
+    get shareUrl() {
+        const url = new URL(window.location.href);
+        url.search = '';
+        return url.href;
+    },
+
+    get emailShareUrl() {
+        const subject = `Laravel tip: ${this.activeTip?.title ?? 'LaraTips'}`;
+        const body = `Take a look at this Laravel tip:\n\n${this.activeTip?.title ?? ''}\n\n${this.shareUrl}`;
+        return `mailto:?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+    },
+
+    async shareViaSystem() {
+        if (!this.canNativeShare || !this.activeTip) return;
+
+        this.showShareMenu = false;
+        try {
+            await navigator.share({
+                title: this.activeTip.title,
+                text: 'Laravel tip from LaraTips',
+                url: this.shareUrl,
+            });
+        } catch (e) {
+            if (e.name !== 'AbortError') console.error('Could not share tip', e);
+        }
+    },
+
+    async copyShareLink() {
+        try {
+            await navigator.clipboard.writeText(this.shareUrl);
+        } catch {
+            const input = document.createElement('textarea');
+            input.value = this.shareUrl;
+            input.style.position = 'fixed';
+            input.style.opacity = '0';
+            document.body.appendChild(input);
+            input.select();
+            document.execCommand('copy');
+            input.remove();
+        }
+
+        this.shareCopied = true;
+        setTimeout(() => { this.shareCopied = false; }, 1800);
     },
 
     // ---------- favorites ----------

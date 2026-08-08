@@ -324,6 +324,43 @@ input.input::placeholder {
   vertical-align: 0.04em;
 }
 
+.share-menu {
+  position: absolute;
+  top: calc(100% + 0.55rem);
+  right: 0;
+  z-index: 50;
+  width: 11.75rem;
+  padding: 0.35rem;
+  border: 1px solid rgba(148, 163, 184, 0.2);
+  border-radius: 0.75rem;
+  background: #111a2a;
+  box-shadow: 0 18px 38px rgba(0, 0, 0, 0.28);
+}
+
+.share-menu__item {
+  display: flex;
+  width: 100%;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.6rem 0.65rem;
+  border: 0;
+  border-radius: 0.5rem;
+  color: #c9d3e1;
+  background: transparent;
+  font: inherit;
+  font-size: 0.78rem;
+  text-align: left;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.share-menu__item:hover,
+.share-menu__item:focus-visible {
+  color: #ffffff;
+  background: rgba(148, 163, 184, 0.13);
+  outline: none;
+}
+
 input.input {
   background-color: var(--input) !important;
   border-color: var(--line-strong) !important;
@@ -442,6 +479,22 @@ input.input:focus {
   border-color: rgba(216, 75, 62, 0.2);
   color: #bd382e;
   background: rgba(216, 75, 62, 0.08);
+}
+
+.app-shell[data-theme="light"] .share-menu {
+  border-color: rgba(30, 41, 59, 0.14);
+  background: #ffffff;
+  box-shadow: 0 18px 38px rgba(30, 41, 59, 0.14);
+}
+
+.app-shell[data-theme="light"] .share-menu__item {
+  color: #44546d;
+}
+
+.app-shell[data-theme="light"] .share-menu__item:hover,
+.app-shell[data-theme="light"] .share-menu__item:focus-visible {
+  color: #172033;
+  background: rgba(30, 41, 59, 0.06);
 }
 
 .app-shell[data-theme="light"] .markdown-body {

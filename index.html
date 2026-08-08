@@ -301,13 +301,44 @@
                     </button>
                     <h1 class="text-lg sm:text-2xl font-bold text-white truncate" x-html="formatInlineCode(activeTip?.title)"></h1>
                 </div>
-                <button type="button" @click="toggleFavorite(activeTip)"
-                        :aria-pressed="isFavorite(activeTip)" aria-label="Toggle favorite"
-                        :class="isFavorite(activeTip) ? 'bg-brand/15 border-brand/40 text-brand' : 'bg-gray-900 border-gray-800 text-gray-400 hover:text-white hover:bg-gray-800'"
-                        class="shrink-0 flex items-center gap-1.5 rounded-lg border px-3 py-2 text-sm font-medium transition-colors focus-ring">
-                    <img :src="assets.pinUrl" width="13" alt="" class="pin-icon" :class="isFavorite(activeTip) ? 'opacity-100' : 'opacity-60'"/>
-                    <span class="hidden sm:inline" x-text="isFavorite(activeTip) ? 'Saved' : 'Save'"></span>
-                </button>
+                <div class="flex shrink-0 items-center gap-2">
+                    <div class="relative" @click.outside="showShareMenu = false">
+                        <button type="button" @click="showShareMenu = !showShareMenu"
+                                :aria-expanded="showShareMenu" aria-haspopup="menu" aria-label="Share this tip"
+                                class="share-trigger flex items-center gap-1.5 rounded-lg border border-gray-800 bg-gray-900 px-3 py-2 text-sm font-medium text-gray-400 hover:bg-gray-800 hover:text-white focus-ring">
+                            <span x-html="shareIcon('w-4 h-4')"></span>
+                            <span class="hidden sm:inline">Share</span>
+                        </button>
+                        <div x-show="showShareMenu" x-cloak x-transition.origin.top.right role="menu" class="share-menu">
+                            <button x-show="canNativeShare" type="button" @click="shareViaSystem()" role="menuitem" class="share-menu__item">
+                                <span x-html="shareIcon('w-4 h-4')"></span>
+                                Share with apps
+                            </button>
+                            <button type="button" @click="copyShareLink()" role="menuitem" class="share-menu__item">
+                                <svg x-show="!shareCopied" class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                    <rect x="9" y="9" width="13" height="13" rx="2"></rect><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"></path>
+                                </svg>
+                                <svg x-show="shareCopied" x-cloak class="w-4 h-4 text-brand" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"></path>
+                                </svg>
+                                <span x-text="shareCopied ? 'Link copied' : 'Copy link'"></span>
+                            </button>
+                            <a :href="emailShareUrl" @click="showShareMenu = false" role="menuitem" class="share-menu__item">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                    <rect x="3" y="5" width="18" height="14" rx="2"></rect><path stroke-linecap="round" d="M3 7l9 6 9-6"></path>
+                                </svg>
+                                Share by email
+                            </a>
+                        </div>
+                    </div>
+                    <button type="button" @click="toggleFavorite(activeTip)"
+                            :aria-pressed="isFavorite(activeTip)" aria-label="Toggle favorite"
+                            :class="isFavorite(activeTip) ? 'bg-brand/15 border-brand/40 text-brand' : 'bg-gray-900 border-gray-800 text-gray-400 hover:text-white hover:bg-gray-800'"
+                            class="flex items-center gap-1.5 rounded-lg border px-3 py-2 text-sm font-medium transition-colors focus-ring">
+                        <img :src="assets.pinUrl" width="13" alt="" class="pin-icon" :class="isFavorite(activeTip) ? 'opacity-100' : 'opacity-60'"/>
+                        <span class="hidden sm:inline" x-text="isFavorite(activeTip) ? 'Saved' : 'Save'"></span>
+                    </button>
+                </div>
             </div>
 
             <div id="tip-content" class="markdown-body rounded-xl p-4 sm:p-6 scroll-mt-20"
