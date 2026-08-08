@@ -2,181 +2,291 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8"/>
-    <!--    <link rel="icon" type="image/svg+xml" href="/vite.svg" />-->
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    <title>Lara-Tips</title>
+    <meta name="description" content="Browse hundreds of Laravel tips and tricks, organized by topic, right in your browser."/>
+    <title>LaraTips — Laravel tips &amp; tricks</title>
 </head>
-<body x-data="lara_tips" class=" bg-gray-900">
-<header class="fixed w-full z-40 bg-gray-800 p-4 shadow-sm border-b border-gray-900">
-    <div class="w-full flex justify-between items-center ">
-        <div class="flex">
-            <div class="mr-4">
-                <img :src="assets.iconUrl" width="24" alt="">
-            </div>
-            <span class="text-2xl text-bold text-[#F33]">Lara</span><span class="text-2xl">Tips</span>
-        </div>
-        <div class="flex">
-            <button @click="toggleSideNav()" data-drawer-target="separator-sidebar" data-drawer-toggle="separator-sidebar"
-                    aria-controls="separator-sidebar" type="button"
-                    class="p-2  text-sm text-gray-500 rounded-lg md:hidden hover:bg-gray-100 focus:outline-none focus:ring-1 focus:ring-gray-600 dark:text-gray-400 dark:hover:bg-gray-700 dark:focus:ring-gray-600">
-                <span class="sr-only">Open sidebar</span>
-                <svg class="w-6 h-6" aria-hidden="true" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
-                    <path clip-rule="evenodd" fill-rule="evenodd"
-                          d="M2 4.75A.75.75 0 012.75 4h14.5a.75.75 0 010 1.5H2.75A.75.75 0 012 4.75zm0 10.5a.75.75 0 01.75-.75h7.5a.75.75 0 010 1.5h-7.5a.75.75 0 01-.75-.75zM2 10a.75.75 0 01.75-.75h14.5a.75.75 0 010 1.5H2.75A.75.75 0 012 10z"></path>
+<body x-data="lara_tips" class="bg-gray-950 text-gray-200 antialiased">
+
+<!-- ============ Splash / loading screen ============ -->
+<div x-show="isLoading" x-transition:leave="transition ease-in duration-300" x-transition:leave-end="opacity-0"
+     class="fixed inset-0 z-50 flex flex-col items-center justify-center bg-gray-950">
+    <div class="flex items-center gap-3 mb-6">
+        <img :src="assets.iconUrl" width="28" alt="" class="opacity-90"/>
+        <span class="text-3xl font-bold"><span class="text-brand">Lara</span>Tips</span>
+    </div>
+    <div class="loader h-10 w-10 rounded-full border-4 border-gray-800 border-t-brand animate-spin mb-4"></div>
+    <p class="text-gray-500 text-sm">Loading your tips…</p>
+</div>
+
+<!-- ============ Header ============ -->
+<header class="fixed top-0 inset-x-0 z-40 h-16 bg-gray-900/90 backdrop-blur border-b border-gray-800">
+    <div class="h-full flex items-center justify-between px-4">
+        <div class="flex items-center gap-3">
+            <button @click="toggleSideNav()" type="button" aria-label="Toggle sidebar" aria-controls="sidebar"
+                    :aria-expanded="showSideNav"
+                    class="md:hidden p-2 -ml-2 rounded-lg text-gray-400 hover:text-white hover:bg-gray-800 focus-ring">
+                <svg x-show="!showSideNav" class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16"/>
                 </svg>
+                <svg x-show="showSideNav" x-cloak class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/>
+                </svg>
+            </button>
+            <button type="button" @click="goHome()" class="flex items-center gap-2 focus-ring rounded-md">
+                <img :src="assets.iconUrl" width="22" alt="" class="opacity-90"/>
+                <span class="text-xl font-bold tracking-tight"><span class="text-brand">Lara</span>Tips</span>
+            </button>
+        </div>
+
+        <div class="flex items-center gap-2">
+            <button type="button" @click="surpriseMe()"
+                    class="hidden sm:inline-flex items-center gap-1.5 rounded-lg px-3 py-2 text-sm font-medium text-gray-300 hover:text-white hover:bg-gray-800 focus-ring">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z"/>
+                </svg>
+                Surprise me
+            </button>
+            <button type="button" @click="openFavorites()"
+                    class="relative inline-flex items-center gap-1.5 rounded-lg px-3 py-2 text-sm font-medium text-gray-300 hover:text-white hover:bg-gray-800 focus-ring">
+                <img :src="assets.pinUrl" width="16" alt="" class="opacity-80"/>
+                <span class="hidden sm:inline">Favorites</span>
+                <span x-show="favorites.length" x-text="favorites.length"
+                      class="ml-0.5 inline-flex items-center justify-center min-w-[1.25rem] h-5 px-1 rounded-full bg-brand text-white text-xs font-semibold"></span>
             </button>
         </div>
     </div>
 </header>
-<aside :class="{'-translate-x-full': !showSideNav}" id="separator-sidebar"
-       class="fixed top-0 left-0 z-30 w-72 h-screen transition-transform  sm:translate-x-0" aria-label="Sidebar">
-    <div class="mt-[66px] h-full px-3 py-4 overflow-y-auto bg-gray-50 bg-gray-800 dark:bg-gray-800">
-        <div class="w-full flex flex-col mx-auto py-1">
-            <form action="" class="w-full p-2 pb-6">
-                <input x-model="sectionSearch" type="search" class="input w-full p-3 rounded-md bg-gray-900 hover:shadow-lg"
-                       placeholder="Search"/>
-            </form>
-            <div class="h-100 p-2 pb-6 overflow-y-scroll" x-init="readSections()">
-                <ul class="flex flex-col gap-1 pb-6">
-                    <template x-for="section of sections">
-                        <a x-show="((sectionSearch.length>0 && section) ? (section.title.toLowerCase().includes(sectionSearch.toLowerCase())) : true)"
-                           href="#" @click="openSection(section.file)"
-                           class="bg-slate-900 rounded-md p-3 text-white hover:text-slate-800 hover:bg-[#eaeaea] active:bg-[#eaeaea] flex flex-row justify-between"
-                        >
-                            <div x-text="section.title"></div>
-                            <div>
-                                <div class=" text-center p-1 aspect-square rounded-full text-sm bg-slate-800 text-gray-300"
-                                     x-text="section.tips"></div>
-                            </div>
-                        </a>
-                    </template>
-                </ul>
 
-                <div class="mt-1 mb-5">
-                    <div class="text-slate-700 text-center"><span>LaraTips</span> V 0.0.1</div>
-                </div>
-            </div>
+<!-- ============ Sidebar backdrop (mobile) ============ -->
+<div x-show="showSideNav" x-cloak @click="showSideNav = false"
+     x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100"
+     x-transition:leave="transition ease-in duration-150" x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0"
+     class="fixed inset-0 z-30 bg-black/60 md:hidden"></div>
+
+<!-- ============ Sidebar ============ -->
+<aside id="sidebar" :class="showSideNav ? 'translate-x-0' : '-translate-x-full md:translate-x-0'"
+       class="fixed top-16 left-0 z-30 w-72 h-[calc(100vh-4rem)] bg-gray-900 border-r border-gray-800 transition-transform duration-200 flex flex-col">
+    <div class="p-3 border-b border-gray-800">
+        <label for="sidebar-search-input" class="sr-only">Search categories</label>
+        <div class="relative">
+            <svg class="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-gray-500" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                <circle cx="11" cy="11" r="7"/><path stroke-linecap="round" d="M21 21l-4.3-4.3"/>
+            </svg>
+            <input id="sidebar-search-input" x-model="sectionSearch" type="search"
+                   class="input w-full pl-9 pr-3 py-2 rounded-lg bg-gray-800 border border-gray-700 text-sm"
+                   placeholder="Search categories…"/>
+        </div>
+    </div>
+
+    <nav class="flex-1 overflow-y-auto p-3 space-y-1">
+        <button type="button" @click="openFavorites()"
+                :class="viewingFavorites ? 'bg-brand/15 text-white ring-1 ring-brand/40' : 'text-gray-300 hover:bg-gray-800 hover:text-white'"
+                class="w-full flex items-center justify-between gap-2 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors focus-ring">
+            <span class="flex items-center gap-2">
+                <img :src="assets.pinUrl" width="14" alt="" class="opacity-80"/>
+                Favorites
+            </span>
+            <span x-show="favorites.length" x-text="favorites.length"
+                  class="text-center px-1.5 h-5 min-w-[1.25rem] rounded-full text-xs bg-gray-800 text-gray-300 leading-5"></span>
+        </button>
+
+        <div class="pt-2 pb-1 px-3 text-xs font-semibold uppercase tracking-wider text-gray-600">Categories</div>
+
+        <template x-for="section in filteredSections" :key="section.file">
+            <button type="button" @click="openSection(section)"
+                    :class="activeSection && activeSection.file === section.file && !viewingFavorites ? 'bg-brand/15 text-white ring-1 ring-brand/40' : 'text-gray-300 hover:bg-gray-800 hover:text-white'"
+                    class="w-full flex items-center justify-between gap-2 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors focus-ring">
+                <span class="flex items-center gap-2 min-w-0">
+                    <span x-text="sectionIcon(section.file)" class="shrink-0"></span>
+                    <span x-text="section.title" class="truncate text-left"></span>
+                </span>
+                <span x-text="section.tips" class="shrink-0 text-center px-1.5 h-5 min-w-[1.25rem] rounded-full text-xs bg-gray-800 text-gray-400 leading-5"></span>
+            </button>
+        </template>
+
+        <p x-show="filteredSections.length === 0" class="px-3 py-4 text-sm text-gray-600">No categories match "<span x-text="sectionSearch"></span>".</p>
+    </nav>
+
+    <div class="p-3 border-t border-gray-800 text-xs text-gray-600 flex items-center justify-between">
+        <span>LaraTips v0.0.1</span>
+        <div class="flex items-center gap-3">
+            <a href="https://github.com/ringunger" target="_blank" rel="noopener" aria-label="GitHub" class="hover:text-gray-400 focus-ring rounded">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="13" height="13" fill="currentColor">
+                    <path d="M32 0 C14 0 0 14 0 32 0 53 19 62 22 62 24 62 24 61 24 60 L24 55 C17 57 14 53 13 50 13 50 13 49 11 47 10 46 6 44 10 44 13 44 15 48 15 48 18 52 22 51 24 50 24 48 26 46 26 46 18 45 12 42 12 31 12 27 13 24 15 22 15 22 13 18 15 13 15 13 20 13 24 17 27 15 37 15 40 17 44 13 49 13 49 13 51 20 49 22 49 22 51 24 52 27 52 31 52 42 45 45 38 46 39 47 40 49 40 52 L40 60 C40 61 40 62 42 62 45 62 64 53 64 32 64 14 50 0 32 0 Z"/>
+                </svg>
+            </a>
+            <a href="https://twitter.com/ringunger" target="_blank" rel="noopener" aria-label="Twitter" class="hover:text-gray-400 focus-ring rounded">
+                <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M19.633,7.997c0.013,0.175,0.013,0.349,0.013,0.523c0,5.325-4.053,11.461-11.46,11.461c-2.282,0-4.402-0.661-6.186-1.809 c0.324,0.037,0.636,0.05,0.973,0.05c1.883,0,3.616-0.636,5.001-1.721c-1.771-0.037-3.255-1.197-3.767-2.793 c0.249,0.037,0.499,0.062,0.761,0.062c0.361,0,0.724-0.05,1.061-0.137c-1.847-0.374-3.23-1.995-3.23-3.953v-0.05 c0.537,0.299,1.16,0.486,1.82,0.511C3.534,9.419,2.823,8.184,2.823,6.787c0-0.748,0.199-1.434,0.548-2.032 c1.983,2.443,4.964,4.04,8.306,4.215c-0.062-0.3-0.1-0.611-0.1-0.923c0-2.22,1.796-4.028,4.028-4.028 c1.16,0,2.207,0.486,2.943,1.272c0.91-0.175,1.782-0.512,2.556-0.973c-0.299,0.935-0.936,1.721-1.771,2.22 c0.811-0.088,1.597-0.312,2.319-0.624C21.104,6.712,20.419,7.423,19.633,7.997z"/>
+                </svg>
+            </a>
         </div>
     </div>
 </aside>
 
-<div class="p-4 sm:ml-72 overflow-y-scroll h-full">
-    <div class="flex flex-col w-full mx-auto px-1 py-8 md:px-6 h-full mb-4 mt-[66px]">
-        <div x-show="activeTip === null && activeSection === null">
-            <form action="" class="w-full p-2 pb-6">
-                <input x-model="sectionSearch" type="search"
-                       class="border border-gray-700 input w-full p-3 rounded-md bg-gray-900 hover:shadow-lg"
-                       placeholder="Search categories"/>
-            </form>
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 sm:grid-cols-2">
-                <template x-for="section of sections">
-                    <a x-show="((sectionSearch.length>0 && section) ? (section.title.toLowerCase().includes(sectionSearch.toLowerCase())) : true)"
-                       href="#" @click="openSection(section.file)"
-                       class="shadow-md hover:shadow-xl rounded-lg flex flex-row gap-3 items-center py-3 px-3 bg-slate-800 text-gray-300 mb-2 hover:text-gray-200"
-                    >
-                        <div class="grow-0">
+<!-- ============ Main content ============ -->
+<main class="pt-16 md:pl-72 min-h-screen">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 py-8">
 
-                            <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none">
-                                <path d="M19 11H5M19 11C20.1046 11 21 11.8954 21 13V19C21 20.1046 20.1046 21 19 21H5C3.89543 21 3 20.1046 3 19V13C3 11.8954 3.89543 11 5 11M19 11V9C19 7.89543 18.1046 7 17 7M5 11V9C5 7.89543 5.89543 7 7 7M7 7V5C7 3.89543 7.89543 3 9 3H15C16.1046 3 17 3.89543 17 5V7M7 7H17" stroke="#4A5568" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
-                            </svg>
+        <!-- error banner -->
+        <div x-show="error" x-cloak class="mb-6 rounded-lg border border-red-900 bg-red-950/50 text-red-300 px-4 py-3 text-sm flex items-start gap-2">
+            <svg class="w-5 h-5 shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v4m0 4h.01M10.29 3.86l-8.18 14.18A2 2 0 003.82 21h16.36a2 2 0 001.71-3l-8.18-14.14a2 2 0 00-3.42 0z"/>
+            </svg>
+            <span x-text="error"></span>
+        </div>
+
+        <!-- ============ HOME ============ -->
+        <div x-show="!activeSection && !activeTip && !viewingFavorites" x-cloak class="animate-fade-in">
+            <div class="mb-8">
+                <h1 class="text-2xl sm:text-3xl font-bold text-white mb-1">Laravel Tips &amp; Tricks</h1>
+                <p class="text-gray-500">
+                    <span x-text="totalTips"></span> tips across <span x-text="sections.length"></span> categories. Pick a topic below to dive in.
+                </p>
+            </div>
+
+            <div class="relative mb-6">
+                <svg class="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-500" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                    <circle cx="11" cy="11" r="7"/><path stroke-linecap="round" d="M21 21l-4.3-4.3"/>
+                </svg>
+                <input id="home-search-input" x-model="sectionSearch" type="search"
+                       class="input w-full pl-10 pr-4 py-3 rounded-xl bg-gray-900 border border-gray-800 focus:border-brand/60"
+                       placeholder="Search categories… (press / to focus)"/>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                <template x-for="section in filteredSections" :key="section.file">
+                    <button type="button" @click="openSection(section)"
+                            class="group text-left rounded-xl border border-gray-800 bg-gray-900 hover:bg-gray-800/80 hover:border-gray-700 hover:-translate-y-0.5 transition-all p-4 flex items-start gap-3 focus-ring">
+                        <span class="text-2xl leading-none mt-0.5" x-text="sectionIcon(section.file)"></span>
+                        <span class="flex-1 min-w-0">
+                            <span class="block font-semibold text-gray-100 group-hover:text-white" x-text="section.title"></span>
+                            <span class="block text-xs text-gray-500 mt-1" x-text="section.tips + ' tips'"></span>
+                        </span>
+                        <svg class="w-4 h-4 text-gray-600 group-hover:text-brand shrink-0 mt-1 transition-colors" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/>
+                        </svg>
+                    </button>
+                </template>
+            </div>
+
+            <p x-show="sections.length && filteredSections.length === 0" class="text-center text-gray-600 py-16">
+                No categories match "<span x-text="sectionSearch"></span>".
+            </p>
+        </div>
+
+        <!-- ============ SECTION (tip list) or FAVORITES ============ -->
+        <div x-show="(activeSection || viewingFavorites) && !activeTip" x-cloak class="animate-fade-in">
+            <nav class="flex items-center gap-1.5 text-sm text-gray-500 mb-4" aria-label="Breadcrumb">
+                <button type="button" @click="goHome()" class="hover:text-gray-300 focus-ring rounded">Home</button>
+                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg>
+                <span class="text-gray-300 font-medium" x-text="viewingFavorites ? 'Favorites' : activeSection.title"></span>
+            </nav>
+
+            <div class="flex items-center gap-3 mb-6">
+                <button type="button" @click="viewingFavorites ? closeFavorites() : closeSection()" aria-label="Back"
+                        class="p-2 rounded-lg bg-gray-900 border border-gray-800 hover:bg-gray-800 text-gray-300 hover:text-white focus-ring">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"/>
+                    </svg>
+                </button>
+                <h2 class="text-xl sm:text-2xl font-bold text-white flex items-center gap-2">
+                    <span x-show="!viewingFavorites" x-text="sectionIcon(activeSection?.file)"></span>
+                    <span x-show="viewingFavorites">📌</span>
+                    <span x-text="viewingFavorites ? 'Favorites' : activeSection.title"></span>
+                </h2>
+            </div>
+
+            <div class="relative mb-6">
+                <svg class="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-500" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                    <circle cx="11" cy="11" r="7"/><path stroke-linecap="round" d="M21 21l-4.3-4.3"/>
+                </svg>
+                <input id="tip-search-input" x-model="tipSearch" type="search"
+                       class="input w-full pl-10 pr-4 py-3 rounded-xl bg-gray-900 border border-gray-800 focus:border-brand/60"
+                       placeholder="Search tips… (press / to focus)"/>
+            </div>
+
+            <!-- empty states -->
+            <div x-show="viewingFavorites && favorites.length === 0" class="text-center py-16">
+                <p class="text-4xl mb-3">📌</p>
+                <p class="text-gray-400 font-medium">No favorites yet</p>
+                <p class="text-gray-600 text-sm mt-1">Open a tip and tap the pin icon to save it here.</p>
+            </div>
+            <p x-show="!viewingFavorites && tips.length === 0 && activeSection" class="text-center text-gray-600 py-16">
+                This category doesn't have any tips yet.
+            </p>
+            <p x-show="filteredTips.length === 0 && (viewingFavorites ? favorites.length > 0 : tips.length > 0)"
+               class="text-center text-gray-600 py-16">
+                No tips match "<span x-text="tipSearch"></span>".
+            </p>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                <template x-for="tip in filteredTips" :key="(tip.sectionFile ?? activeSection?.file) + '::' + tip.title">
+                    <button type="button" @click="openTip(tip)"
+                            class="group text-left rounded-xl border border-gray-800 bg-gray-900 hover:bg-gray-800/80 hover:border-gray-700 hover:-translate-y-0.5 transition-all p-4 flex flex-col gap-2 focus-ring">
+                        <div class="flex items-start justify-between gap-2">
+                            <span class="font-semibold text-gray-100 group-hover:text-white leading-snug" x-text="tip.title"></span>
+                            <img x-show="isFavorite(tip)" :src="assets.pinUrl" width="13" alt="Favorited" class="shrink-0 mt-1 opacity-70"/>
                         </div>
-                        <div class="flex-grow flex">
-                            <div class="flex-grow" x-text="section.title"></div>
-                            <div>
-                                <div class=" text-center p-1 aspect-square rounded-full text-sm bg-slate-700 text-gray-300"
-                                     x-text="section.tips"></div>
-                            </div>
-                        </div>
-                    </a>
+                        <span class="text-xs text-gray-500 line-clamp-2" x-text="excerpt(tip.content)"></span>
+                        <span x-show="viewingFavorites" class="text-[11px] text-brand/80 font-medium" x-text="tip.sectionTitle"></span>
+                    </button>
                 </template>
             </div>
         </div>
 
-        <div class="w-full flex-col" x-show="activeTip == null && activeSection != null">
-            <div class="mb-2">
-                <div class="flex items-center">
-                    <button class="mr-2 bg-slate-800 p-1" @click="closeSection()">
-                        <span>
-                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
-                                <path fill="#FFF"
-                                      d="M21 11L6.414 11 11.707 5.707 10.293 4.293 2.586 12 10.293 19.707 11.707 18.293 6.414 13 21 13z"></path>
-                            </svg>
-                        </span>
-                    </button>
-                    <h3 class="text-xl text-gray-100" x-text="activeSection ? activeSection.toString().replaceAll('-', ' ').replace('.md', '') : 'Section'">Section</h3>
-                </div>
-            </div>
-            <div class="w-full">
-                <input x-model="tipSearch" type="search"
-                       class="input w-full p-3 rounded-md bg-gray-900 border border-slate-800 rounded-md" placeholder="Search tips"/>
-            </div>
-            <div class="w-full mb-3">
-                <h3 class="text-lg md:text-xl text-gray-100" x-text="activeSection ? activeSection.title : 'Sections'">Section Header</h3>
-            </div>
-            <div class="w-full mb-5">
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 sm:grid-cols-2">
-                    <template x-for="tip of tips">
-                        <a href="#"
-                           x-show="((tipSearch.length && tip) ? (tip.title.toLowerCase().includes(tipSearch.toLowerCase())) : true)"
-                           @click="openTip(tip)"
-                           class="shadow-md hover:shadow-lg rounded-md flex flex-row gap-3 items-center py-2 px-3 bg-slate-800">
-                            <div class="shrink-0 me-4">
-                                <img class="icon-img opacity-[0.6]" :src="assets.iconUrl" width="35" alt="">
-                            </div>
-                            <sapn class="text-gray-200" x-text="tip ? tip.title : ''"></sapn>
-                        </a>
-                    </template>
-                </div>
-            </div>
-        </div>
+        <!-- ============ TIP DETAIL ============ -->
+        <div x-show="activeTip" x-cloak class="animate-fade-in max-w-3xl mx-auto">
+            <nav class="flex items-center gap-1.5 text-sm text-gray-500 mb-4 flex-wrap" aria-label="Breadcrumb">
+                <button type="button" @click="goHome()" class="hover:text-gray-300 focus-ring rounded">Home</button>
+                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg>
+                <button type="button" @click="closeTip()" class="hover:text-gray-300 focus-ring rounded"
+                        x-text="viewingFavorites ? 'Favorites' : activeSection?.title"></button>
+                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg>
+                <span class="text-gray-300 font-medium truncate" x-text="activeTip?.title"></span>
+            </nav>
 
-        <div class="w-full" x-show="activeTip !== null && activeSection !== null">
-            <div class="w-full mb-3">
-                <div class="flex items-center">
-                    <button class="mr-2 bg-slate-800 p-1" @click="closeTip()">
-                        <span>
-                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
-                                <path fill="#FFF"
-                                      d="M21 11L6.414 11 11.707 5.707 10.293 4.293 2.586 12 10.293 19.707 11.707 18.293 6.414 13 21 13z"></path>
-                            </svg>
-                        </span>
+            <div class="flex items-start justify-between gap-3 mb-4">
+                <div class="flex items-center gap-3 min-w-0">
+                    <button type="button" @click="closeTip()" aria-label="Back"
+                            class="p-2 rounded-lg bg-gray-900 border border-gray-800 hover:bg-gray-800 text-gray-300 hover:text-white focus-ring shrink-0">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"/>
+                        </svg>
                     </button>
-                    <h3 class="text-xl text-gray-100" x-text="activeTip ? activeTip.title : 'Sections'"></h3>
+                    <h1 class="text-lg sm:text-2xl font-bold text-white truncate" x-text="activeTip?.title"></h1>
                 </div>
-                <div class="w-100 my-3 rounded-lg ">
-                    <div class="markdown-body rounded-lg p-3" x-html="activeTip ? parseMarkDown(activeTip.content) : ''"></div>
-                </div>
+                <button type="button" @click="toggleFavorite(activeTip)"
+                        :aria-pressed="isFavorite(activeTip)" aria-label="Toggle favorite"
+                        :class="isFavorite(activeTip) ? 'bg-brand/15 border-brand/40 text-brand' : 'bg-gray-900 border-gray-800 text-gray-400 hover:text-white hover:bg-gray-800'"
+                        class="shrink-0 flex items-center gap-1.5 rounded-lg border px-3 py-2 text-sm font-medium transition-colors focus-ring">
+                    <img :src="assets.pinUrl" width="13" alt="" :class="isFavorite(activeTip) ? 'opacity-100' : 'opacity-60'"/>
+                    <span class="hidden sm:inline" x-text="isFavorite(activeTip) ? 'Saved' : 'Save'"></span>
+                </button>
+            </div>
+
+            <div id="tip-content" class="markdown-body rounded-xl p-4 sm:p-6 scroll-mt-20"
+                 x-html="activeTip ? parseMarkDown(activeTip.content) : ''"></div>
+
+            <div class="flex items-center justify-between mt-6 pb-10">
+                <button type="button" @click="stepTip(-1)" :disabled="activeTipIndex <= 0"
+                        class="flex items-center gap-1.5 rounded-lg px-3 py-2 text-sm font-medium text-gray-300 border border-gray-800 bg-gray-900 hover:bg-gray-800 hover:text-white disabled:opacity-30 disabled:pointer-events-none focus-ring">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"/></svg>
+                    Previous
+                </button>
+                <button type="button" @click="stepTip(1)"
+                        :disabled="activeTipIndex === -1 || activeTipIndex >= (viewingFavorites ? favorites.length : tips.length) - 1"
+                        class="flex items-center gap-1.5 rounded-lg px-3 py-2 text-sm font-medium text-gray-300 border border-gray-800 bg-gray-900 hover:bg-gray-800 hover:text-white disabled:opacity-30 disabled:pointer-events-none focus-ring">
+                    Next
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg>
+                </button>
             </div>
         </div>
 
     </div>
-</div>
-<div class="footer fixed w-full bottom-0 h-5 bg-gray-900 border-t border-slate-800 text-gray-700 text-xs">
-    <div class="flex justify-end px-3 items-center">
-        <div class="ml-2 flex items-center">
-            <svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 24 24">
-                <path fill="#374151" d="M19.633,7.997c0.013,0.175,0.013,0.349,0.013,0.523c0,5.325-4.053,11.461-11.46,11.461c-2.282,0-4.402-0.661-6.186-1.809 c0.324,0.037,0.636,0.05,0.973,0.05c1.883,0,3.616-0.636,5.001-1.721c-1.771-0.037-3.255-1.197-3.767-2.793 c0.249,0.037,0.499,0.062,0.761,0.062c0.361,0,0.724-0.05,1.061-0.137c-1.847-0.374-3.23-1.995-3.23-3.953v-0.05 c0.537,0.299,1.16,0.486,1.82,0.511C3.534,9.419,2.823,8.184,2.823,6.787c0-0.748,0.199-1.434,0.548-2.032 c1.983,2.443,4.964,4.04,8.306,4.215c-0.062-0.3-0.1-0.611-0.1-0.923c0-2.22,1.796-4.028,4.028-4.028 c1.16,0,2.207,0.486,2.943,1.272c0.91-0.175,1.782-0.512,2.556-0.973c-0.299,0.935-0.936,1.721-1.771,2.22 c0.811-0.088,1.597-0.312,2.319-0.624C21.104,6.712,20.419,7.423,19.633,7.997z"></path>
-            </svg>
-            <a href="https://twitter.com/ringunger" class="text-gray-700 font-light hover:text-gray-600 ml-1">@ringunger</a>
-        </div>
-        <div class="ml-3 flex items-center">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="10" height="10">
-                <path stroke-width="0" fill="#374151"
-                      d="M32 0 C14 0 0 14 0 32 0 53 19 62 22 62 24 62 24 61 24 60 L24 55 C17 57 14 53 13 50 13 50 13 49 11 47 10 46 6 44 10 44 13 44 15 48 15 48 18 52 22 51 24 50 24 48 26 46 26 46 18 45 12 42 12 31 12 27 13 24 15 22 15 22 13 18 15 13 15 13 20 13 24 17 27 15 37 15 40 17 44 13 49 13 49 13 51 20 49 22 49 22 51 24 52 27 52 31 52 42 45 45 38 46 39 47 40 49 40 52 L40 60 C40 61 40 62 42 62 45 62 64 53 64 32 64 14 50 0 32 0 Z"></path>
-            </svg>
-            <a href="https://github.com/ringunger" class="text-gray-700 font-light hover:text-gray-600 ml-1">@ringunger</a>
-        </div>
-    </div>
-</div>
+</main>
 
-<div x-init="setTimeout(() => {finishLoading()}, 2000)" x-show="isLoading"
-     class="fixed top-0 left-0 right-0 bottom-0 w-full h-screen z-50 overflow-hidden bg-gray-900 opacity-99 flex flex-col items-center justify-center">
-    <div class="loader ease-linear rounded-full border-4 border-t-4 border-gray-200 h-12 w-12 mb-4"></div>
-    <h2 class="text-center text-white text-xl font-semibold">Loading...</h2>
-    <p class="w-1/3 text-center text-gray-500 text-xs">Hold on a sec...</p>
-</div>
 </body>
 <script type="module" src="main.js"></script>
-<script>
-</script>
 </html>
