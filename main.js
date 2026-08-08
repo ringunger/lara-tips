@@ -5,6 +5,10 @@ window.Alpine = Alpine;
 import { marked } from 'marked';
 window.marked = marked;
 import hljs from 'highlight.js';
+import {
+    BadgeCheck, Blocks, BookOpen, Bug, Database, Factory, Image, Link, Mail,
+    Map, Package, Pin, Plug, ShieldCheck, Sparkles, Wrench,
+} from 'lucide';
 
 import "././src/highlights.scss";
 import "././src/markdown.css";
@@ -13,25 +17,36 @@ import "./style.css";
 import iconUrl from './src/icon.svg';
 import pinUrl from './src/pin.svg';
 
-// Emoji "icons" per category file, purely decorative sugar for the section cards.
-const SECTION_EMOJI = {
-    'db-models-and-eloquent.md': '🗄️',
-    'models-relations.md': '🔗',
-    'migrations.md': '🧱',
-    'views.md': '🖼️',
-    'routing.md': '🧭',
-    'validation.md': '✅',
-    'collections.md': '📦',
-    'auth.md': '🔐',
-    'mail.md': '✉️',
-    'artisan.md': '⚙️',
-    'factories.md': '🏭',
-    'log-and-debug.md': '🐞',
-    'api.md': '🔌',
-    'other.md': '✨',
+// Only these named Lucide icons are bundled for the category cards.
+const SECTION_ICONS = {
+    'db-models-and-eloquent.md': Database,
+    'models-relations.md': Link,
+    'migrations.md': Blocks,
+    'views.md': Image,
+    'routing.md': Map,
+    'validation.md': BadgeCheck,
+    'collections.md': Package,
+    'auth.md': ShieldCheck,
+    'mail.md': Mail,
+    'artisan.md': Wrench,
+    'factories.md': Factory,
+    'log-and-debug.md': Bug,
+    'api.md': Plug,
+    'other.md': Sparkles,
 };
 
 const FAVORITES_KEY = 'laratips.favorites';
+
+function iconSvg(icon, className) {
+    const nodes = icon.map(([tag, attributes]) => {
+        const attrs = Object.entries(attributes)
+            .map(([name, value]) => `${name}="${value}"`)
+            .join(' ');
+        return `<${tag} ${attrs}></${tag}>`;
+    }).join('');
+
+    return `<svg xmlns="http://www.w3.org/2000/svg" class="${className}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${nodes}</svg>`;
+}
 
 // Delegated click handler for the "Copy" buttons injected into rendered
 // code blocks. Attached once, works for any markdown rendered afterwards.
@@ -137,8 +152,12 @@ Alpine.data('lara_tips', () => ({
         return list.findIndex((tip) => this.isSameTip(tip, this.activeTip));
     },
 
-    sectionIcon(file) {
-        return SECTION_EMOJI[file] ?? '📘';
+    sectionIcon(file, className = 'w-5 h-5') {
+        return iconSvg(SECTION_ICONS[file] ?? BookOpen, className);
+    },
+
+    favoriteIcon(className = 'w-5 h-5') {
+        return iconSvg(Pin, className);
     },
 
     excerpt(markdown, length = 110) {
