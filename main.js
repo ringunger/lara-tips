@@ -6,8 +6,9 @@ import { marked } from 'marked';
 window.marked = marked;
 import hljs from 'highlight.js';
 import {
-    BadgeCheck, Blocks, BookOpen, Bug, Database, Factory, Image, Link, Mail,
+    BadgeCheck, Blocks, BookOpen, Bug, Check, Copy, Database, Factory, Image, Link, Mail,
     Map, Moon, Package, Pin, Plug, ShieldCheck, Sparkles, Sun, Wrench,
+    WrapText,
 } from 'lucide';
 
 import "././src/highlights.scss";
@@ -38,6 +39,25 @@ const SECTION_ICONS = {
 const FAVORITES_KEY = 'laratips.favorites';
 const THEME_KEY = 'laratips.theme';
 const ROUTE_PREFIX = '#/';
+const LANGUAGE_LABELS = {
+    bash: 'Shell',
+    blade: 'Blade',
+    csharp: 'C#',
+    css: 'CSS',
+    html: 'HTML',
+    javascript: 'JavaScript',
+    js: 'JavaScript',
+    json: 'JSON',
+    php: 'PHP',
+    shell: 'Shell',
+    sh: 'Shell',
+    sql: 'SQL',
+    ts: 'TypeScript',
+    typescript: 'TypeScript',
+    xml: 'XML',
+    yaml: 'YAML',
+    yml: 'YAML',
+};
 
 function iconSvg(icon, className) {
     const nodes = icon.map(([tag, attributes]) => {
@@ -64,6 +84,15 @@ function formatInlineCodeText(value = '') {
     return escaped.replace(/`([^`]+)`/g, '<span class="inline-code">$1</span>');
 }
 
+function formatLanguageLabel(language) {
+    return LANGUAGE_LABELS[language.toLowerCase()] ?? language.toUpperCase();
+}
+
+function setCodeActionLabel(button, label, icon) {
+    button.querySelector('.code-action__label').textContent = label;
+    button.querySelector('.code-action__icon').innerHTML = iconSvg(icon, 'w-3.5 h-3.5');
+}
+
 function sectionRouteKey(file) {
     return file.replace(/\.md$/, '');
 }
@@ -86,23 +115,33 @@ function parseRoute(hash) {
 // code blocks. Attached once, works for any markdown rendered afterwards.
 document.addEventListener('click', (event) => {
     const button = event.target.closest('.copy-code-btn');
-    if (!button) return;
-    const pre = button.closest('.code-block')?.querySelector('pre');
-    const code = pre?.innerText ?? '';
-    if (!code) return;
+    if (button) {
+        const pre = button.closest('.code-block')?.querySelector('pre');
+        const code = pre?.innerText ?? '';
+        if (!code) return;
 
-    navigator.clipboard.writeText(code).then(() => {
-        const original = button.dataset.label ?? 'Copy';
-        button.textContent = 'Copied!';
-        button.classList.add('copied');
-        setTimeout(() => {
-            button.textContent = original;
-            button.classList.remove('copied');
-        }, 1500);
-    }).catch(() => {
-        button.textContent = 'Failed';
-        setTimeout(() => { button.textContent = 'Copy'; }, 1500);
-    });
+        navigator.clipboard.writeText(code).then(() => {
+            setCodeActionLabel(button, 'Copied', Check);
+            button.classList.add('copied');
+            setTimeout(() => {
+                setCodeActionLabel(button, 'Copy', Copy);
+                button.classList.remove('copied');
+            }, 1500);
+        }).catch(() => {
+            setCodeActionLabel(button, 'Failed', Copy);
+            setTimeout(() => setCodeActionLabel(button, 'Copy', Copy), 1500);
+        });
+        return;
+    }
+
+    const wrapButton = event.target.closest('.toggle-wrap-btn');
+    if (!wrapButton) return;
+
+    const wrapper = wrapButton.closest('.code-block');
+    const wrapped = wrapper.classList.toggle('code-block--wrapped');
+    wrapButton.setAttribute('aria-pressed', String(wrapped));
+    wrapButton.setAttribute('title', wrapped ? 'Disable line wrapping' : 'Wrap long lines');
+    setCodeActionLabel(wrapButton, wrapped ? 'Unwrap' : 'Wrap', WrapText);
 });
 
 Alpine.data('lara_tips', () => ({
@@ -485,15 +524,27 @@ Alpine.data('lara_tips', () => ({
 
             const label = document.createElement('span');
             label.className = 'code-block__language';
-            label.textContent = language;
+            label.textContent = formatLanguageLabel(language);
             toolbar.appendChild(label);
+
+            const actions = document.createElement('div');
+            actions.className = 'code-block__actions';
+
+            const wrapButton = document.createElement('button');
+            wrapButton.type = 'button';
+            wrapButton.className = 'code-action toggle-wrap-btn';
+            wrapButton.setAttribute('aria-pressed', 'false');
+            wrapButton.setAttribute('title', 'Wrap long lines');
+            wrapButton.innerHTML = `<span class="code-action__icon">${iconSvg(WrapText, 'w-3.5 h-3.5')}</span><span class="code-action__label">Wrap</span>`;
+            actions.appendChild(wrapButton);
 
             const button = document.createElement('button');
             button.type = 'button';
-            button.className = 'copy-code-btn';
-            button.dataset.label = 'Copy';
-            button.textContent = 'Copy';
-            toolbar.appendChild(button);
+            button.className = 'code-action copy-code-btn';
+            button.setAttribute('title', 'Copy code');
+            button.innerHTML = `<span class="code-action__icon">${iconSvg(Copy, 'w-3.5 h-3.5')}</span><span class="code-action__label">Copy</span>`;
+            actions.appendChild(button);
+            toolbar.appendChild(actions);
             wrapper.insertBefore(toolbar, pre);
         });
         return container.innerHTML;

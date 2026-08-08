@@ -100,6 +100,11 @@ input.input::placeholder {
   letter-spacing: 0.08em;
   text-transform: uppercase;
 }
+.code-block__actions {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+}
 .code-block pre {
   margin: 0 !important;
   padding: 1rem 1.1rem !important;
@@ -110,7 +115,17 @@ input.input::placeholder {
 .code-block pre code {
   background: transparent !important;
 }
-.copy-code-btn {
+.code-block--wrapped pre,
+.markdown-body .code-block--wrapped pre > code {
+  overflow-wrap: anywhere;
+  white-space: pre-wrap !important;
+  word-break: break-word;
+}
+.code-action {
+  display: inline-flex;
+  min-height: 1.75rem;
+  align-items: center;
+  gap: 0.3rem;
   padding: 0.3rem 0.6rem;
   font-size: 0.7rem;
   font-weight: 500;
@@ -122,9 +137,13 @@ input.input::placeholder {
   cursor: pointer;
   transition: background-color .15s ease, color .15s ease;
 }
-.copy-code-btn:hover {
+.code-action:hover,
+.code-action[aria-pressed="true"] {
   background-color: rgba(148, 163, 184, 0.22);
   color: #fff;
+}
+.code-action__icon {
+  display: inline-flex;
 }
 .copy-code-btn.copied {
   opacity: 1;
@@ -134,7 +153,7 @@ input.input::placeholder {
 
 /* Touch devices can't hover to reveal the copy button, so keep it visible */
 @media (hover: none) {
-  .copy-code-btn {
+  .code-action {
     min-height: 2rem;
   }
 }
@@ -472,6 +491,28 @@ input.input:focus {
   color: #44546d;
   background: rgba(30, 41, 59, 0.06);
   border-color: rgba(30, 41, 59, 0.14);
+}
+
+.app-shell[data-theme="light"] .code-action:hover,
+.app-shell[data-theme="light"] .code-action[aria-pressed="true"] {
+  color: #263246;
+  background: rgba(30, 41, 59, 0.12);
+}
+
+@media (max-width: 480px) {
+  .code-block__toolbar {
+    padding-left: 0.7rem;
+  }
+
+  .code-action__label {
+    display: none;
+  }
+
+  .code-action {
+    width: 1.9rem;
+    justify-content: center;
+    padding: 0.3rem;
+  }
 }
 
 @media (max-width: 640px) {
