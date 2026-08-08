@@ -7,7 +7,7 @@ window.marked = marked;
 import hljs from 'highlight.js';
 import {
     BadgeCheck, Blocks, BookOpen, Bug, Database, Factory, Image, Link, Mail,
-    Map, Package, Pin, Plug, ShieldCheck, Sparkles, Wrench,
+    Map, Moon, Package, Pin, Plug, ShieldCheck, Sparkles, Sun, Wrench,
 } from 'lucide';
 
 import "././src/highlights.scss";
@@ -36,6 +36,7 @@ const SECTION_ICONS = {
 };
 
 const FAVORITES_KEY = 'laratips.favorites';
+const THEME_KEY = 'laratips.theme';
 const ROUTE_PREFIX = '#/';
 
 function iconSvg(icon, className) {
@@ -105,6 +106,7 @@ Alpine.data('lara_tips', () => ({
     tipSearch: '',
     sectionSearch: '',
     error: null,
+    theme: 'dark',
     lt: new LaraTips(),
     showSideNav: false,
 
@@ -112,6 +114,7 @@ Alpine.data('lara_tips', () => ({
 
     async init() {
         this.favorites = this.loadFavorites();
+        this.theme = this.loadTheme();
         await this.readSections();
         await this.applyRoute();
         this.finishLoading();
@@ -179,6 +182,10 @@ Alpine.data('lara_tips', () => ({
 
     favoriteIcon(className = 'w-5 h-5') {
         return iconSvg(Pin, className);
+    },
+
+    themeIcon(className = 'w-5 h-5') {
+        return iconSvg(this.theme === 'dark' ? Sun : Moon, className);
     },
 
     excerpt(markdown, length = 110) {
@@ -321,6 +328,23 @@ Alpine.data('lara_tips', () => ({
 
     toggleSideNav() {
         this.showSideNav = !this.showSideNav;
+    },
+
+    loadTheme() {
+        try {
+            return localStorage.getItem(THEME_KEY) === 'light' ? 'light' : 'dark';
+        } catch {
+            return 'dark';
+        }
+    },
+
+    toggleTheme() {
+        this.theme = this.theme === 'dark' ? 'light' : 'dark';
+        try {
+            localStorage.setItem(THEME_KEY, this.theme);
+        } catch (e) {
+            console.warn('Could not save theme preference', e);
+        }
     },
 
     // ---------- favorites ----------
