@@ -50,6 +50,20 @@ function iconSvg(icon, className) {
     return `<svg xmlns="http://www.w3.org/2000/svg" class="${className}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${nodes}</svg>`;
 }
 
+function formatInlineCodeText(value = '') {
+    if (!value) return '';
+
+    const escaped = String(value).replace(/[&<>"']/g, (character) => ({
+        '&': '&amp;',
+        '<': '&lt;',
+        '>': '&gt;',
+        '"': '&quot;',
+        "'": '&#39;',
+    })[character]);
+
+    return escaped.replace(/`([^`]+)`/g, '<span class="inline-code">$1</span>');
+}
+
 function sectionRouteKey(file) {
     return file.replace(/\.md$/, '');
 }
@@ -191,6 +205,10 @@ Alpine.data('lara_tips', () => ({
 
     themeIcon(className = 'w-5 h-5') {
         return iconSvg(this.theme === 'dark' ? Sun : Moon, className);
+    },
+
+    formatInlineCode(value) {
+        return formatInlineCodeText(value);
     },
 
     excerpt(markdown, length = 110) {

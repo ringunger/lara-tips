@@ -290,6 +290,21 @@ input.input::placeholder {
   text-align: center;
 }
 
+.inline-code {
+  display: inline-block;
+  padding: 0.08em 0.4em;
+  border: 1px solid rgba(255, 102, 88, 0.25);
+  border-radius: 0.35rem;
+  color: #ff9187;
+  background: rgba(255, 102, 88, 0.1);
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 0.82em;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  line-height: 1.35;
+  vertical-align: 0.04em;
+}
+
 input.input {
   background-color: var(--input) !important;
   border-color: var(--line-strong) !important;
@@ -402,6 +417,12 @@ input.input:focus {
 
 .app-shell[data-theme="light"] .pin-icon {
   filter: brightness(0) saturate(100%) invert(48%) sepia(77%) saturate(2183%) hue-rotate(329deg) brightness(102%) contrast(100%);
+}
+
+.app-shell[data-theme="light"] .inline-code {
+  border-color: rgba(216, 75, 62, 0.2);
+  color: #bd382e;
+  background: rgba(216, 75, 62, 0.08);
 }
 
 .app-shell[data-theme="light"] .markdown-body {

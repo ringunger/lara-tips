@@ -202,7 +202,7 @@
                             <div class="flex items-start gap-3">
                                 <span class="category-icon shrink-0" x-html="sectionIcon(result.sectionFile, 'w-5 h-5 text-brand')"></span>
                                 <span class="min-w-0 flex-1">
-                                    <span class="block font-semibold text-gray-100 group-hover:text-white leading-snug" x-text="result.title"></span>
+                                    <span class="block font-semibold text-gray-100 group-hover:text-white leading-snug" x-html="formatInlineCode(result.title)"></span>
                                     <span class="block mt-1 text-xs text-brand font-medium" x-text="result.sectionTitle"></span>
                                 </span>
                             </div>
@@ -269,7 +269,7 @@
                         <div class="flex items-start gap-3">
                             <span class="category-icon shrink-0" x-html="sectionIcon(tip.sectionFile ?? activeSection?.file, 'w-5 h-5 text-brand')"></span>
                                 <span class="min-w-0 flex-1">
-                                    <span class="block font-semibold text-gray-100 group-hover:text-white leading-snug" x-text="tip.title"></span>
+                                    <span class="block font-semibold text-gray-100 group-hover:text-white leading-snug" x-html="formatInlineCode(tip.title)"></span>
                                     <span x-show="viewingFavorites" class="block mt-1 text-xs text-brand font-medium" x-text="tip.sectionTitle"></span>
                                 </span>
                             <img x-show="isFavorite(tip)" :src="assets.pinUrl" width="13" alt="Favorited" class="pin-icon shrink-0 mt-1 opacity-70"/>
@@ -288,7 +288,7 @@
                 <button type="button" @click="closeTip()" class="hover:text-gray-300 focus-ring rounded"
                         x-text="viewingFavorites ? 'Favorites' : activeSection?.title"></button>
                 <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg>
-                <span class="text-gray-300 font-medium truncate" x-text="activeTip?.title"></span>
+                <span class="text-gray-300 font-medium truncate" x-html="formatInlineCode(activeTip?.title)"></span>
             </nav>
 
             <div class="flex items-start justify-between gap-3 mb-4">
@@ -299,7 +299,7 @@
                             <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"/>
                         </svg>
                     </button>
-                    <h1 class="text-lg sm:text-2xl font-bold text-white truncate" x-text="activeTip?.title"></h1>
+                    <h1 class="text-lg sm:text-2xl font-bold text-white truncate" x-html="formatInlineCode(activeTip?.title)"></h1>
                 </div>
                 <button type="button" @click="toggleFavorite(activeTip)"
                         :aria-pressed="isFavorite(activeTip)" aria-label="Toggle favorite"
