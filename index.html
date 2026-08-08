@@ -6,11 +6,11 @@
     <meta name="description" content="Browse hundreds of Laravel tips and tricks, organized by topic, right in your browser."/>
     <title>LaraTips — Laravel tips &amp; tricks</title>
 </head>
-<body x-data="lara_tips" class="bg-gray-950 text-gray-200 antialiased">
+<body x-data="lara_tips" class="app-shell bg-gray-950 text-gray-200 antialiased">
 
 <!-- ============ Splash / loading screen ============ -->
 <div x-show="isLoading" x-transition:leave="transition ease-in duration-300" x-transition:leave-end="opacity-0"
-     class="fixed inset-0 z-50 flex flex-col items-center justify-center bg-gray-950">
+     class="app-splash fixed inset-0 z-50 flex flex-col items-center justify-center bg-gray-950">
     <div class="flex items-center gap-3 mb-6">
         <img :src="assets.iconUrl" width="28" alt="" class="opacity-90"/>
         <span class="text-3xl font-bold"><span class="text-brand">Lara</span>Tips</span>
@@ -20,7 +20,7 @@
 </div>
 
 <!-- ============ Header ============ -->
-<header class="fixed top-0 inset-x-0 z-40 h-16 bg-gray-900/90 backdrop-blur border-b border-gray-800">
+<header class="app-header fixed top-0 inset-x-0 z-40 h-16 bg-gray-900/90 backdrop-blur border-b border-gray-800">
     <div class="h-full flex items-center justify-between px-4">
         <div class="flex items-center gap-3">
             <button @click="toggleSideNav()" type="button" aria-label="Toggle sidebar" aria-controls="sidebar"
@@ -66,7 +66,7 @@
 
 <!-- ============ Sidebar ============ -->
 <aside id="sidebar" :class="showSideNav ? 'translate-x-0' : '-translate-x-full md:translate-x-0'"
-       class="fixed top-16 left-0 z-30 w-72 h-[calc(100vh-4rem)] bg-gray-900 border-r border-gray-800 transition-transform duration-200 flex flex-col">
+       class="app-sidebar fixed top-16 left-0 z-30 w-72 h-[calc(100vh-4rem)] bg-gray-900 border-r border-gray-800 transition-transform duration-200 flex flex-col">
     <div class="p-3 border-b border-gray-800">
         <label for="sidebar-search-input" class="sr-only">Search categories</label>
         <div class="relative">
@@ -109,7 +109,7 @@
     </nav>
 
     <div class="p-3 border-t border-gray-800 text-xs text-gray-600 flex items-center justify-between">
-        <span>LaraTips v0.0.1</span>
+        <span>LaraTips v0.0.2</span>
         <div class="flex items-center gap-3">
             <a href="https://github.com/ringunger" target="_blank" rel="noopener" aria-label="GitHub" class="hover:text-gray-400 focus-ring rounded">
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="13" height="13" fill="currentColor">
@@ -126,8 +126,8 @@
 </aside>
 
 <!-- ============ Main content ============ -->
-<main class="pt-16 md:pl-72 min-h-screen">
-    <div class="max-w-6xl mx-auto px-4 sm:px-6 py-8">
+<main class="app-main pt-16 md:pl-72 min-h-screen">
+    <div class="app-content max-w-6xl mx-auto px-4 sm:px-6 py-8">
 
         <!-- error banner -->
         <div x-show="error" x-cloak class="mb-6 rounded-lg border border-red-900 bg-red-950/50 text-red-300 px-4 py-3 text-sm flex items-start gap-2">
@@ -139,27 +139,28 @@
 
         <!-- ============ HOME ============ -->
         <div x-show="!activeSection && !activeTip && !viewingFavorites" x-cloak class="animate-fade-in">
-            <div class="mb-8">
-                <h1 class="text-2xl sm:text-3xl font-bold text-white mb-1">Laravel Tips &amp; Tricks</h1>
-                <p class="text-gray-500">
+            <div class="home-hero mb-8">
+                <span class="home-eyebrow">Laravel field notes</span>
+                <h1 class="text-3xl sm:text-4xl font-bold text-white mb-2">Laravel Tips &amp; Tricks</h1>
+                <p class="max-w-xl text-gray-500">
                     <span x-text="totalTips"></span> tips across <span x-text="sections.length"></span> categories. Pick a topic below to dive in.
                 </p>
-            </div>
 
-            <div class="relative mb-6">
+                <div class="home-search relative mt-6">
                 <svg class="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-500" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                     <circle cx="11" cy="11" r="7"/><path stroke-linecap="round" d="M21 21l-4.3-4.3"/>
                 </svg>
                 <input id="home-search-input" x-model="sectionSearch" type="search"
                        class="input w-full pl-10 pr-4 py-3 rounded-xl bg-gray-900 border border-gray-800 focus:border-brand/60"
                        placeholder="Search categories… (press / to focus)"/>
+                </div>
             </div>
 
-            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            <div class="category-grid grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                 <template x-for="section in filteredSections" :key="section.file">
                     <button type="button" @click="openSection(section)"
-                            class="group text-left rounded-xl border border-gray-800 bg-gray-900 hover:bg-gray-800/80 hover:border-gray-700 hover:-translate-y-0.5 transition-all p-4 flex items-start gap-3 focus-ring">
-                        <span class="shrink-0 mt-0.5" x-html="sectionIcon(section.file, 'w-6 h-6 text-brand')"></span>
+                            class="category-card group text-left rounded-xl border border-gray-800 bg-gray-900 hover:bg-gray-800/80 hover:border-gray-700 hover:-translate-y-0.5 transition-all p-4 flex items-start gap-3 focus-ring">
+                        <span class="category-icon shrink-0 mt-0.5" x-html="sectionIcon(section.file, 'w-6 h-6 text-brand')"></span>
                         <span class="flex-1 min-w-0">
                             <span class="block font-semibold text-gray-100 group-hover:text-white" x-text="section.title"></span>
                             <span class="block text-xs text-gray-500 mt-1" x-text="section.tips + ' tips'"></span>
