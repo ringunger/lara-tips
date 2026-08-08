@@ -36,6 +36,7 @@ const SECTION_ICONS = {
 };
 
 const FAVORITES_KEY = 'laratips.favorites';
+const ROUTE_PREFIX = '#/';
 
 function iconSvg(icon, className) {
     const nodes = icon.map(([tag, attributes]) => {
@@ -46,6 +47,24 @@ function iconSvg(icon, className) {
     }).join('');
 
     return `<svg xmlns="http://www.w3.org/2000/svg" class="${className}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${nodes}</svg>`;
+}
+
+function sectionRouteKey(file) {
+    return file.replace(/\.md$/, '');
+}
+
+function parseRoute(hash) {
+    const path = hash.startsWith(ROUTE_PREFIX) ? hash.slice(ROUTE_PREFIX.length) : '';
+    const parts = path.split('/').filter(Boolean);
+
+    if (parts.length === 0) return { name: 'home' };
+    if (parts[0] === 'favorites' && parts.length === 1) return { name: 'favorites' };
+    if (parts[0] === 'sections' && parts.length === 2) return { name: 'section', section: decodeURIComponent(parts[1]) };
+    if (parts[0] === 'tips' && parts.length === 3) {
+        return { name: 'tip', section: decodeURIComponent(parts[1]), title: decodeURIComponent(parts[2]) };
+    }
+
+    return { name: 'not-found' };
 }
 
 // Delegated click handler for the "Copy" buttons injected into rendered
@@ -94,9 +113,11 @@ Alpine.data('lara_tips', () => ({
     async init() {
         this.favorites = this.loadFavorites();
         await this.readSections();
+        await this.applyRoute();
         this.finishLoading();
 
         window.addEventListener('keydown', (event) => this.handleKeydown(event));
+        window.addEventListener('hashchange', () => this.applyRoute());
     },
 
     async readSections() {
@@ -175,7 +196,50 @@ Alpine.data('lara_tips', () => ({
 
     // ---------- navigation ----------
 
-    async openSection(section) {
+    setRoute(path) {
+        const hash = `${ROUTE_PREFIX}${path}`;
+        if (window.location.hash !== hash) window.location.hash = hash;
+    },
+
+    async applyRoute() {
+        let route;
+        try {
+            route = parseRoute(window.location.hash);
+        } catch {
+            route = { name: 'not-found' };
+        }
+
+        if (route.name === 'home') {
+            this.goHome({ updateRoute: false });
+            return;
+        }
+
+        if (route.name === 'favorites') {
+            this.openFavorites({ updateRoute: false });
+            return;
+        }
+
+        const section = this.sections.find((item) => sectionRouteKey(item.file) === route.section);
+        if (!section) {
+            this.goHome({ updateRoute: false });
+            this.error = 'This link does not point to an available tip.';
+            return;
+        }
+
+        await this.openSection(section, { updateRoute: false });
+        if (route.name === 'section') return;
+
+        const tip = this.tips.find((item) => item.title === route.title);
+        if (!tip) {
+            this.goHome({ updateRoute: false });
+            this.error = 'This link does not point to an available tip.';
+            return;
+        }
+
+        this.openTip(tip, { updateRoute: false });
+    },
+
+    async openSection(section, { updateRoute = true } = {}) {
         this.viewingFavorites = false;
         this.activeSection = section;
         this.activeTip = null;
@@ -183,36 +247,45 @@ Alpine.data('lara_tips', () => ({
         this.showSideNav = false;
         this.tips = await this.lt.loadTips(section.file);
         this.error = this.lt.error;
+        if (updateRoute) this.setRoute(`sections/${encodeURIComponent(sectionRouteKey(section.file))}`);
     },
 
     closeSection() {
         this.activeSection = null;
         this.tips = [];
         this.tipSearch = '';
+        this.setRoute('');
     },
 
-    openFavorites() {
+    openFavorites({ updateRoute = true } = {}) {
         this.viewingFavorites = true;
         this.activeSection = null;
         this.activeTip = null;
         this.tipSearch = '';
         this.showSideNav = false;
+        if (updateRoute) this.setRoute('favorites');
     },
 
     closeFavorites() {
         this.viewingFavorites = false;
         this.tipSearch = '';
+        this.setRoute('');
     },
 
-    goHome() {
+    goHome({ updateRoute = true } = {}) {
         this.activeTip = null;
         this.activeSection = null;
         this.viewingFavorites = false;
         this.tipSearch = '';
+        if (updateRoute) this.setRoute('');
     },
 
-    openTip(tip) {
+    openTip(tip, { updateRoute = true } = {}) {
         this.activeTip = tip;
+        if (updateRoute) {
+            const sectionFile = tip.sectionFile ?? this.activeSection?.file;
+            this.setRoute(`tips/${encodeURIComponent(sectionRouteKey(sectionFile))}/${encodeURIComponent(tip.title)}`);
+        }
         this.$nextTick(() => {
             hljs.highlightAll();
             document.getElementById('tip-content')?.scrollIntoView({ block: 'start' });
@@ -221,6 +294,11 @@ Alpine.data('lara_tips', () => ({
 
     closeTip() {
         this.activeTip = null;
+        if (this.viewingFavorites) {
+            this.setRoute('favorites');
+        } else if (this.activeSection) {
+            this.setRoute(`sections/${encodeURIComponent(sectionRouteKey(this.activeSection.file))}`);
+        }
     },
 
     stepTip(direction) {

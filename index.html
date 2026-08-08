@@ -181,7 +181,7 @@
             <nav class="flex items-center gap-1.5 text-sm text-gray-500 mb-4" aria-label="Breadcrumb">
                 <button type="button" @click="goHome()" class="hover:text-gray-300 focus-ring rounded">Home</button>
                 <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg>
-                <span class="text-gray-300 font-medium" x-text="viewingFavorites ? 'Favorites' : activeSection.title"></span>
+                <span class="text-gray-300 font-medium" x-text="viewingFavorites ? 'Favorites' : activeSection?.title"></span>
             </nav>
 
             <div class="flex items-center gap-3 mb-6">
@@ -194,7 +194,7 @@
                 <h2 class="text-xl sm:text-2xl font-bold text-white flex items-center gap-2">
                     <span x-show="!viewingFavorites" x-html="sectionIcon(activeSection?.file, 'w-6 h-6 text-brand')"></span>
                     <span x-show="viewingFavorites" x-html="favoriteIcon('w-6 h-6 text-brand')"></span>
-                    <span x-text="viewingFavorites ? 'Favorites' : activeSection.title"></span>
+                    <span x-text="viewingFavorites ? 'Favorites' : activeSection?.title"></span>
                 </h2>
             </div>
 
